@@ -2,18 +2,20 @@
 'use client';
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { push, set, ref } from "firebase/database";
 import { database } from "../lib/firebase/config";
-import { useRouter } from "next/navigation";
+import  Slugify  from "../lib/help/slugify";
 
 export default function Home() {
   const [newRoom, setNewRoom] = useState('');
   const [newPlayer, setNewPlayer] = useState('');
   const router = useRouter();
 
+
   const handleAddRoom = () => {
     try {
-      const slug = newRoom.trim().toLowerCase().replace(/\s+/g, '-');
+      const slug = Slugify(newRoom);
       const usesRef = ref(database, 'rooms');
       const newDataRef = push(usesRef);
       const roomId = newDataRef.key;
