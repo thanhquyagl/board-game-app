@@ -49,7 +49,7 @@ const Room = () => {
           id_player: idPlayer,
           del_flg: 0
         })
-        router.push(`/room/${idRoom}`)
+        router.push(`/room/${idRoom}?idPlayer=${idPlayer}`)
       } catch (error) {
         console.log(error)
       }
