@@ -35,11 +35,13 @@ export default function Home() {
     try {
       const usesRef = ref(database, 'players');
       const newDataRef = push(usesRef);
+      const playerId = newDataRef.key;
       set(newDataRef, {
+        id: playerId,
         name: newPlayer,
       });
       setNewPlayer('');
-      alert('Data được tạo thành công!!');
+      router.push(`/room?idPlayer=${playerId}`);
     } catch (error) {
       console.log(error);
     }
