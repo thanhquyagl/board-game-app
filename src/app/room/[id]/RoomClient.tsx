@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from "react";
-import { ref, get, remove } from "firebase/database";
+import { ref, remove, get, onValue } from "firebase/database";
 import { database } from "../../../lib/firebase/config";
 import { useRouter, useSearchParams } from "next/navigation";
 
@@ -28,54 +28,50 @@ const RoomClient = ({ params }: Props) => {
   const idPlayer = searchParams.get('idPlayer') || '';
 
   useEffect(() => {
-    const fetchRoomData = async () => {
-      try {
-        const roomRef = ref(database, `rooms/${id}`);
-        const roomSnapshot = await get(roomRef);
-        if (roomSnapshot.exists()) {
-          setRoom(roomSnapshot.val());
-        } else {
-          console.log('Không có dữ liệu');
-        }
-      } catch (error) {
-        console.log(error);
+    const roomRef = ref(database, `rooms/${id}`);
+    const unsubscribeRoom = onValue(roomRef, (snapshot) => {
+      if (snapshot.exists()) {
+        setRoom(snapshot.val());
+      } else {
+        console.log('Không có dữ liệu');
       }
-    };
+    }, (error) => {
+      console.log(error);
+    });
 
-    const fetchPlayerRoomData = async () => {
-      try {
-        const playerRoomsRef = ref(database, 'player-x-room');
-        const playerRoomsSnapshot = await get(playerRoomsRef);
-        if (playerRoomsSnapshot.exists()) {
-          const playerRoomsData: any = Object.entries(playerRoomsSnapshot.val()).map(([id, data]) => ({
-            id,
-            ...data as object,
-          }));
-          setPlayerxroom(playerRoomsData);
+    const playerRoomsRef = ref(database, 'player-x-room');
+    const unsubscribePlayerRoom = onValue(playerRoomsRef, async (snapshot) => {
+      if (snapshot.exists()) {
+        const playerRoomsData: any = Object.entries(snapshot.val()).map(([id, data]) => ({
+          id,
+          ...data as object,
+        }));
+        setPlayerxroom(playerRoomsData);
 
-          const playerPromises = playerRoomsData.map(async (playerRoom: any) => {
-            const playerRef = ref(database, `players/${playerRoom.id_player}`);
-            const playerSnapshot = await get(playerRef);
-            if (playerSnapshot.exists()) {
-              return { [playerRoom.id_player]: playerSnapshot.val() };
-            } else {
-              return { [playerRoom.id_player]: { name: 'Unknown' } };
-            }
-          });
+        const playerPromises = playerRoomsData.map(async (playerRoom: any) => {
+          const playerRef = ref(database, `players/${playerRoom.id_player}`);
+          const playerSnapshot = await get(playerRef);
+          if (playerSnapshot.exists()) {
+            return { [playerRoom.id_player]: playerSnapshot.val() };
+          } else {
+            return { [playerRoom.id_player]: { name: 'Unknown' } };
+          }
+        });
 
-          const playerResults = await Promise.all(playerPromises);
-          const playerData = playerResults.reduce((acc, curr) => ({ ...acc, ...curr }), {});
-          setPlayers(playerData);
-        } else {
-          console.log('Không tìm thất dữ liệu');
-        }
-      } catch (error) {
-        console.error('Lỗi lấy dữ liệu player-x-room: ', error);
+        const playerResults = await Promise.all(playerPromises);
+        const playerData = playerResults.reduce((acc, curr) => ({ ...acc, ...curr }), {});
+        setPlayers(playerData);
+      } else {
+        console.log('Không tìm thấy dữ liệu');
       }
-    };
+    }, (error) => {
+      console.error('Lỗi lấy dữ liệu player-x-room: ', error);
+    });
 
-    fetchRoomData();
-    fetchPlayerRoomData();
+    return () => {
+      unsubscribeRoom();
+      unsubscribePlayerRoom();
+    };
   }, [id]);
 
   const handleDeleteRoom = async () => {
@@ -93,7 +89,6 @@ const RoomClient = ({ params }: Props) => {
         <h1 className="text-4xl font-bold">Phòng - {room ? room.name : 'Loading...'}</h1>
         {
           idPlayer === '' && (
-
             <div className="flex gap-4 pb-6 my-6 border-b">
               <button
                 className="flex-none bg-red-700 rounded text-slate-50 px-3 py-2 font-bold"

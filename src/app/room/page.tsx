@@ -1,5 +1,5 @@
 'use client'
-import { push, get, ref, set } from "firebase/database";
+import { push, get, ref, set, onValue } from "firebase/database";
 import { useEffect, useState } from "react";
 import { database } from "../../lib/firebase/config";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -18,6 +18,7 @@ const Room = () => {
 
   useEffect(() => {
     const usesRef = ref(database, 'rooms')
+    
     get(usesRef).then((snapshot) => {
       if (snapshot.exists()) {
         const userArray: any = Object.entries(snapshot.val()).map(([id, data]) => ({
