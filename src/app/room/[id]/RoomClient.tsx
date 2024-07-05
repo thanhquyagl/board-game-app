@@ -1,3 +1,4 @@
+// src/app/room/[id]/RoomClient.tsx
 'use client';
 
 import { useEffect, useState } from "react";
@@ -25,7 +26,7 @@ const RoomClient = ({ params }: Props) => {
   const [players, setPlayers] = useState<{ [key: string]: any }>({});
   const router = useRouter();
   const searchParams = useSearchParams();
-  const idPlayer = searchParams.get('idPlayer') || '';
+  const idAdmin = searchParams.get('idAdmin') || '';
 
   useEffect(() => {
     const roomRef = ref(database, `rooms/${id}`);
@@ -33,7 +34,7 @@ const RoomClient = ({ params }: Props) => {
       if (snapshot.exists()) {
         setRoom(snapshot.val());
       } else {
-        console.log('Không có dữ liệu');
+        router.push('/');
       }
     }, (error) => {
       console.log(error);
@@ -72,11 +73,24 @@ const RoomClient = ({ params }: Props) => {
       unsubscribeRoom();
       unsubscribePlayerRoom();
     };
-  }, [id]);
+  }, [id, router]);
 
   const handleDeleteRoom = async () => {
     try {
       await remove(ref(database, `rooms/${id}`));
+      const playerRoomsRef = ref(database, 'player-x-room');
+      const playerRoomsSnapshot = await get(playerRoomsRef);
+      if (playerRoomsSnapshot.exists()) {
+        const playerRoomsData: any = Object.entries(playerRoomsSnapshot.val()).map(([id, data]) => ({
+          id,
+          ...data as object,
+        }));
+        playerRoomsData.forEach(async (playerRoom: any) => {
+          if (playerRoom.id_room === id) {
+            await remove(ref(database, `player-x-room/${playerRoom.id}`));
+          }
+        });
+      }
       router.push('/');
     } catch (error) {
       console.error('Lỗi xoá room: ', error);
@@ -88,7 +102,7 @@ const RoomClient = ({ params }: Props) => {
       <div className="max-w-3xl mx-auto">
         <h1 className="text-4xl font-bold">Phòng - {room ? room.name : 'Loading...'}</h1>
         {
-          idPlayer === '' && (
+          room && room.admin === idAdmin && (
             <div className="flex gap-4 pb-6 my-6 border-b">
               <button
                 className="flex-none bg-red-700 rounded text-slate-50 px-3 py-2 font-bold"
