@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { ref, remove, get, onValue } from "firebase/database";
 import { database } from "../../../lib/firebase/config";
 import { useRouter, useSearchParams } from "next/navigation";
+import { Modal, ConfigProvider } from "antd";
 
 type Props = {
   params: { id: string }
@@ -27,6 +28,16 @@ const RoomClient = ({ params }: Props) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const idAdmin = searchParams.get('idAdmin') || '';
+
+  const [open, setOpen] = useState<boolean>(false);
+
+  const handleOk = () => {
+    handleDeleteRoom();
+  };
+
+  const handleCancel = () => {
+    setOpen(false);
+  };
 
   useEffect(() => {
     const roomRef = ref(database, `rooms/${id}`);
@@ -106,7 +117,9 @@ const RoomClient = ({ params }: Props) => {
             <div className="flex gap-4 pb-6 my-6 border-b">
               <button
                 className="flex-none bg-red-700 rounded text-slate-50 px-3 py-2 font-bold"
-                onClick={handleDeleteRoom}
+                onClick={() => {
+                  setOpen(true);
+                }}
               >
                 Back
               </button>
@@ -115,6 +128,10 @@ const RoomClient = ({ params }: Props) => {
               >
                 Setting
               </button>
+
+              <Modal title="Xoá Phòng" open={open} onOk={handleOk} onCancel={handleCancel} >
+                <p>Bạn thật sự muốn xoá phòng chơi này?</p>
+              </Modal>
             </div>
           )
         }
