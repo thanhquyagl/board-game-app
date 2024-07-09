@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { ref, remove, get, onValue } from "firebase/database";
 import { database } from "../../../lib/firebase/config";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Modal, ConfigProvider } from "antd";
+import { Modal } from "antd";
 
 type Props = {
   params: { id: string }
@@ -45,7 +45,7 @@ const RoomClient = ({ params }: Props) => {
       if (snapshot.exists()) {
         setRoom(snapshot.val());
       } else {
-        router.push('/');
+        router.push('/room/');
       }
     }, (error) => {
       console.log(error);

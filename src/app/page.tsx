@@ -1,15 +1,16 @@
-// src/app/page.tsx
 'use client';
 
 import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { push, set, ref } from "firebase/database";
 import { database } from "../lib/firebase/config";
 import Slugify from "../lib/help/slugify";
+import { usePlayer } from "../lib/PlayerContext";
 
 export default function Home() {
   const [newRoom, setNewRoom] = useState('');
   const [newPlayer, setNewPlayer] = useState('');
+  const { setIdPlayer } = usePlayer();
   const router = useRouter();
 
   const handleAddRoom = () => {
@@ -36,11 +37,13 @@ export default function Home() {
     try {
       const usesRef = ref(database, 'players');
       const newDataRef = push(usesRef);
-      const playerId = newDataRef.key;
+      const playerId = newDataRef.key as string;
       set(newDataRef, {
         id: playerId,
         name: newPlayer,
       });
+      sessionStorage.setItem("idPlayerStorage", playerId);
+      setIdPlayer(playerId);
       setNewPlayer('');
       router.push(`/room?idPlayer=${playerId}`);
     } catch (error) {
