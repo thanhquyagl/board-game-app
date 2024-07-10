@@ -3,6 +3,7 @@ import { push, get, ref, set, onValue } from "firebase/database";
 import { useEffect, useState } from "react";
 import { database } from "../../lib/firebase/config";
 import { useRouter, useSearchParams } from "next/navigation";
+import { usePlayer } from "../../lib/PlayerContext";
 type Room = {
   id: string;
   name: string;
@@ -13,13 +14,13 @@ const Room = () => {
 
   const [rooms, setRooms] = useState<Room[]>([])
   const searchParams = useSearchParams();
-  const idPlayer = searchParams.get('idPlayer') || '';
+  // const idPlayer = searchParams.get('idPlayer') || '';
 
+  const [idPlayer, setIdPlayer] = useState<any>(null)
 
   useEffect(() => {
     const usesRef = ref(database, 'rooms')
-    
-    get(usesRef).then((snapshot) => {
+    const showRoom = onValue(usesRef, async (snapshot) => {
       if (snapshot.exists()) {
         const userArray: any = Object.entries(snapshot.val()).map(([id, data]) => ({
           id,
@@ -27,17 +28,19 @@ const Room = () => {
         }))
         setRooms(userArray);
       } else {
-        console.log('No data available')
+        console.log('Chưa có phòng chơi nào!')
       }
-    }).catch((error) => {
-      console.log(error)
     })
-  })
+    return () => {
+      showRoom();
+      setIdPlayer(sessionStorage.getItem('idPlayerStorage'))
+    }
+
+  }, [])
 
   const router = useRouter()
 
   const handAddPlayerRoom = (idRoom: string, idPlayer: string) => {
-    console.log(idRoom, idPlayer)
 
     if (idPlayer !== '') {
       try {
@@ -50,7 +53,7 @@ const Room = () => {
           id_player: idPlayer,
           del_flg: 0
         })
-        router.push(`/room/${idRoom}?idPlayer=${idPlayer}`)
+        router.push(`/room/${idRoom}`)
       } catch (error) {
         console.log(error)
       }
@@ -80,13 +83,10 @@ const Room = () => {
                 >
                   {room.name}
                 </button>
-
-
               </div>
             </div>
           ))
         }
-
       </div>
     </div>
   );
