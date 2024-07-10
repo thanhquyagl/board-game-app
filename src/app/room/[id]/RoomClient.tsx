@@ -66,7 +66,7 @@ const RoomClient = ({ params }: Props) => {
           if (playerSnapshot.exists()) {
             return { [playerRoom.id_player]: playerSnapshot.val() };
           } else {
-            return { [playerRoom.id_player]: { name: 'Unknown' } };
+            return { [playerRoom.id_player]: { name: '...' } };
           }
         });
 
@@ -108,33 +108,33 @@ const RoomClient = ({ params }: Props) => {
     }
   };
 
+  const filteredPlayerxroom = playerxroom.filter(playerRoom => playerRoom.id_room === id);
+
   return (
     <div className="bg-slate-900 text-white min-h-screen pt-16">
       <div className="max-w-3xl mx-auto">
         <h1 className="text-4xl font-bold">Phòng - {room ? room.name : 'Loading...'}</h1>
-        {
-          room && room.admin === idAdmin && (
-            <div className="flex gap-4 pb-6 my-6 border-b">
-              <button
-                className="flex-none bg-red-700 rounded text-slate-50 px-3 py-2 font-bold"
-                onClick={() => {
-                  setOpen(true);
-                }}
-              >
-                Back
-              </button>
-              <button
-                className="flex-none bg-white rounded text-slate-900 px-3 py-2 font-bold"
-              >
-                Setting
-              </button>
+        {room && room.admin === idAdmin && (
+          <div className="flex gap-4 pb-6 my-6 border-b">
+            <button
+              className="flex-none bg-red-700 rounded text-slate-50 px-3 py-2 font-bold"
+              onClick={() => {
+                setOpen(true);
+              }}
+            >
+              Back
+            </button>
+            <button
+              className="flex-none bg-white rounded text-slate-900 px-3 py-2 font-bold"
+            >
+              Setting
+            </button>
 
-              <Modal title="Xoá Phòng" open={open} onOk={handleOk} onCancel={handleCancel} >
-                <p>Bạn thật sự muốn xoá phòng chơi này?</p>
-              </Modal>
-            </div>
-          )
-        }
+            <Modal title="Xoá Phòng" open={open} onOk={handleOk} onCancel={handleCancel} >
+              <p>Bạn thật sự muốn xoá phòng chơi này?</p>
+            </Modal>
+          </div>
+        )}
 
         <h2 className="text-2xl pb-4 my-6 border-b">Danh sách người chơi</h2>
         <table className="w-full text-center">
@@ -144,7 +144,7 @@ const RoomClient = ({ params }: Props) => {
               <th className="px-2 py-4 border-b">Tên Player</th>
               <th className="px-2 py-4 border-b">Trạng thái</th>
             </tr>
-            {playerxroom.map((playerRoom, index) => (
+            {filteredPlayerxroom.map((playerRoom, index) => (
               <tr key={playerRoom.id}>
                 <td className="px-2 py-4 border-b">{index + 1}</td>
                 <td className="px-2 py-4 border-b">{players[playerRoom.id_player]?.name || 'Loading...'}</td>

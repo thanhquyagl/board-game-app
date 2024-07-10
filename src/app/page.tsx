@@ -45,7 +45,7 @@ export default function Home() {
       sessionStorage.setItem("idPlayerStorage", playerId);
       setIdPlayer(playerId);
       setNewPlayer('');
-      router.push(`/room?idPlayer=${playerId}`);
+      router.push(`/room/`);
     } catch (error) {
       console.log(error);
     }

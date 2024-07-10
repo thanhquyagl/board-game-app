@@ -2,8 +2,11 @@
 import { push, get, ref, set, onValue } from "firebase/database";
 import { useEffect, useState } from "react";
 import { database } from "../../lib/firebase/config";
-import { useRouter, useSearchParams } from "next/navigation";
-import { usePlayer } from "../../lib/PlayerContext";
+import { useRouter } from "next/navigation";
+import { Alert } from "antd";
+import Link from "next/link";
+
+
 type Room = {
   id: string;
   name: string;
@@ -13,8 +16,6 @@ type Room = {
 const Room = () => {
 
   const [rooms, setRooms] = useState<Room[]>([])
-  const searchParams = useSearchParams();
-  // const idPlayer = searchParams.get('idPlayer') || '';
 
   const [idPlayer, setIdPlayer] = useState<any>(null)
 
@@ -41,14 +42,11 @@ const Room = () => {
   const router = useRouter()
 
   const handAddPlayerRoom = (idRoom: string, idPlayer: string) => {
-
     if (idPlayer !== '') {
       try {
         const usesRef = ref(database, 'player-x-room')
         const newDataRef = push(usesRef)
-        const playerRoomId = newDataRef.key
         set(newDataRef, {
-          id: playerRoomId,
           id_room: idRoom,
           id_player: idPlayer,
           del_flg: 0
@@ -62,7 +60,6 @@ const Room = () => {
     }
   }
 
-
   return (
     <div className="bg-slate-900 text-white min-h-screen pt-16">
 
@@ -72,20 +69,32 @@ const Room = () => {
 
         <hr className="my-3" />
         {
-          rooms.map((room) => (
+          idPlayer ? rooms.map((room) => (
             <div key={room.id}>
               <div className="flex gap-1">
-                <button
-                  className=""
+                <div
+                  className="cursor-pointer w-full hover:bg-slate-700 p-2"
                   onClick={() => {
                     handAddPlayerRoom(room.id, idPlayer)
                   }}
                 >
                   {room.name}
-                </button>
+                </div>
               </div>
             </div>
-          ))
+          )) : (
+            <Alert
+              message="Đăng Nhập"
+              description="Vui lòng tạo tài khoản"
+              type="info"
+              showIcon
+              action={
+                <Link href='/' className="bg-blue-700 hover:bg-blue-600 text-white rounded px-3 py-1">
+                  Home
+                </Link>
+              }
+            />
+          )
         }
       </div>
     </div>
