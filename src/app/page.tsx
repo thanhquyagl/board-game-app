@@ -10,7 +10,7 @@ import { usePlayer } from "../lib/PlayerContext";
 export default function Home() {
   const [newRoom, setNewRoom] = useState('');
   const [newPlayer, setNewPlayer] = useState('');
-  const { setIdPlayer } = usePlayer();
+  const { setIdPlayer, setIdAdmin } = usePlayer();
   const router = useRouter();
 
   const handleAddRoom = () => {
@@ -19,15 +19,17 @@ export default function Home() {
       const usesRef = ref(database, 'rooms');
       const newDataRef = push(usesRef);
       const roomId = newDataRef.key;
-      const idAdmin = newDataRef.key;
+      const idAdmin = newDataRef.key as string;
       set(newDataRef, {
         id: roomId,
         name: newRoom,
         slug,
         admin: idAdmin
       });
+      sessionStorage.setItem("idAdminStorage", idAdmin);
+      setIdAdmin(idAdmin)
       setNewRoom('');
-      router.push(`/room/${roomId}?idAdmin=${idAdmin}`);
+      router.push(`/room/${roomId}?`);
     } catch (error) {
       console.log(error);
     }

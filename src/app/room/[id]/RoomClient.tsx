@@ -4,7 +4,7 @@
 import { useEffect, useState } from "react";
 import { ref, remove, get, onValue } from "firebase/database";
 import { database } from "../../../lib/firebase/config";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Modal } from "antd";
 
 type Props = {
@@ -26,9 +26,7 @@ const RoomClient = ({ params }: Props) => {
   const [playerxroom, setPlayerxroom] = useState<PlayerRoom[]>([]);
   const [players, setPlayers] = useState<{ [key: string]: any }>({});
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const idAdmin = searchParams.get('idAdmin') || '';
-
+  const [idAdmin, setIdAdmin] = useState<string | null>(null);
   const [open, setOpen] = useState<boolean>(false);
 
   const handleOk = () => {
@@ -40,6 +38,7 @@ const RoomClient = ({ params }: Props) => {
   };
 
   useEffect(() => {
+    setIdAdmin(sessionStorage.getItem('idAdminStorage'))
     const roomRef = ref(database, `rooms/${id}`);
     const unsubscribeRoom = onValue(roomRef, (snapshot) => {
       if (snapshot.exists()) {
@@ -102,6 +101,7 @@ const RoomClient = ({ params }: Props) => {
           }
         });
       }
+      sessionStorage.removeItem('idAdminStorage');
       router.push('/');
     } catch (error) {
       console.error('Lỗi xoá room: ', error);
@@ -114,8 +114,8 @@ const RoomClient = ({ params }: Props) => {
     <div className="bg-slate-900 text-white min-h-screen pt-16">
       <div className="max-w-3xl mx-auto">
         <h1 className="text-4xl font-bold">Phòng - {room ? room.name : 'Loading...'}</h1>
-        {room && room.admin === idAdmin && (
-          <div className="flex gap-4 pb-6 my-6 border-b">
+        <div className="flex gap-4 pb-6 my-6 border-b">
+          {room && room.admin === idAdmin && (
             <button
               className="flex-none bg-red-700 rounded text-slate-50 px-3 py-2 font-bold"
               onClick={() => {
@@ -124,17 +124,17 @@ const RoomClient = ({ params }: Props) => {
             >
               Back
             </button>
-            <button
-              className="flex-none bg-white rounded text-slate-900 px-3 py-2 font-bold"
-            >
-              Setting
-            </button>
+          )}
+          <button
+            className="flex-none bg-white rounded text-slate-900 px-3 py-2 font-bold"
+          >
+            Setting
+          </button>
 
-            <Modal title="Xoá Phòng" open={open} onOk={handleOk} onCancel={handleCancel} >
-              <p>Bạn thật sự muốn xoá phòng chơi này?</p>
-            </Modal>
-          </div>
-        )}
+          <Modal title="Xoá Phòng" open={open} onOk={handleOk} onCancel={handleCancel} >
+            <p>Bạn thật sự muốn xoá phòng chơi này?</p>
+          </Modal>
+        </div>
 
         <h2 className="text-2xl pb-4 my-6 border-b">Danh sách người chơi</h2>
         <table className="w-full text-center">
@@ -143,12 +143,18 @@ const RoomClient = ({ params }: Props) => {
               <th className="px-2 py-4 border-b">STT</th>
               <th className="px-2 py-4 border-b">Tên Player</th>
               <th className="px-2 py-4 border-b">Trạng thái</th>
+              <th className="px-2 py-4 border-b">...</th>
             </tr>
             {filteredPlayerxroom.map((playerRoom, index) => (
               <tr key={playerRoom.id}>
                 <td className="px-2 py-4 border-b">{index + 1}</td>
                 <td className="px-2 py-4 border-b">{players[playerRoom.id_player]?.name || 'Loading...'}</td>
                 <td className="px-2 py-4 border-b">{playerRoom.del_flg == 0 ? 'Hoạt động' : 'Off'}</td>
+                <td className="px-2 py-4 border-b">
+                  <button className="bg-red-800 text-slate-50 px-3 py-1 text-sm rounded font-semibold hover:bg-red-500 transition-all">
+                    Kích
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>

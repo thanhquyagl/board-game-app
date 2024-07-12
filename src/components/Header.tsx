@@ -10,7 +10,7 @@ import { database } from "../lib/firebase/config";
 import { remove, ref } from "firebase/database";
 
 export default function Header() {
-  const { idPlayer, setIdPlayer } = usePlayer();
+  const { idPlayer, setIdPlayer, idAdmin, setIdAdmin } = usePlayer();
   const router = useRouter();
 
   const handleMenuClick: MenuProps['onClick'] = () => {
@@ -21,6 +21,9 @@ export default function Header() {
       router.push('/');
     }
   };
+
+  console.log(idPlayer, idAdmin);
+  
 
   const items: MenuProps['items'] = [
     {
@@ -51,7 +54,10 @@ export default function Header() {
                 </Space>
               </Button>
             </Dropdown>
-          )
+          ) 
+        }
+        {
+          idAdmin && "hi Admin"
         }
       </div>
     </div>
