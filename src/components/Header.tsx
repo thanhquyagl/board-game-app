@@ -22,9 +22,6 @@ export default function Header() {
     }
   };
 
-  console.log(idPlayer, idAdmin);
-  
-
   const items: MenuProps['items'] = [
     {
       label: 'Logout',
@@ -57,7 +54,7 @@ export default function Header() {
           ) 
         }
         {
-          idAdmin && "hi Admin"
+          idAdmin && "Hi Admin"
         }
       </div>
     </div>

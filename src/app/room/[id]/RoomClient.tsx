@@ -1,4 +1,3 @@
-// src/app/room/[id]/RoomClient.tsx
 'use client';
 
 import { useEffect, useState } from "react";
@@ -28,13 +27,26 @@ const RoomClient = ({ params }: Props) => {
   const router = useRouter();
   const [idAdmin, setIdAdmin] = useState<string | null>(null);
   const [open, setOpen] = useState<boolean>(false);
+  const [openPopupRemovePlayer, setOpenPopupRemovePlayer] = useState<boolean>(false);
+  const [playerToRemove, setPlayerToRemove] = useState<string | null>(null);
 
   const handleOk = () => {
     handleDeleteRoom();
   };
 
+  const handleOkPopupPlayer = () => {
+    if (playerToRemove) {
+      handleDeletePlayer(playerToRemove);
+    }
+  };
+
   const handleCancel = () => {
     setOpen(false);
+  };
+
+  const handleCancelPopupPlayer = () => {
+    setOpenPopupRemovePlayer(false);
+    setPlayerToRemove(null);
   };
 
   useEffect(() => {
@@ -108,6 +120,16 @@ const RoomClient = ({ params }: Props) => {
     }
   };
 
+  const handleDeletePlayer = async (idPlayerRoom: string) => {
+    try {
+      const playerRoomId = idPlayerRoom;
+      await remove(ref(database, `player-x-room/${playerRoomId}`));
+      setOpenPopupRemovePlayer(false);
+    } catch (error) {
+      alert('không thể kích người chơi, vui lòng thử lại')
+    }
+  }
+
   const filteredPlayerxroom = playerxroom.filter(playerRoom => playerRoom.id_room === id);
 
   return (
@@ -143,18 +165,35 @@ const RoomClient = ({ params }: Props) => {
               <th className="px-2 py-4 border-b">STT</th>
               <th className="px-2 py-4 border-b">Tên Player</th>
               <th className="px-2 py-4 border-b">Trạng thái</th>
-              <th className="px-2 py-4 border-b">...</th>
+              {
+                idAdmin && (
+                  <th className="px-2 py-4 border-b">...</th>
+                )
+              }
             </tr>
             {filteredPlayerxroom.map((playerRoom, index) => (
               <tr key={playerRoom.id}>
                 <td className="px-2 py-4 border-b">{index + 1}</td>
                 <td className="px-2 py-4 border-b">{players[playerRoom.id_player]?.name || 'Loading...'}</td>
                 <td className="px-2 py-4 border-b">{playerRoom.del_flg == 0 ? 'Hoạt động' : 'Off'}</td>
-                <td className="px-2 py-4 border-b">
-                  <button className="bg-red-800 text-slate-50 px-3 py-1 text-sm rounded font-semibold hover:bg-red-500 transition-all">
-                    Kích
-                  </button>
-                </td>
+                {
+                  idAdmin && (
+                    <td className="px-2 py-4 border-b">
+                      <button
+                        onClick={() => { 
+                          setPlayerToRemove(playerRoom.id);
+                          setOpenPopupRemovePlayer(true);
+                        }}
+                        className="bg-red-800 text-slate-50 px-3 py-1 text-sm rounded font-semibold hover:bg-red-500 transition-all"
+                      >
+                        Kích
+                      </button>
+                      <Modal title="Xoá Người Chơi" open={openPopupRemovePlayer} onOk={handleOkPopupPlayer} onCancel={handleCancelPopupPlayer} >
+                        <p>Bạn muốn xoá người chơi này khỏi phòng?</p>
+                      </Modal>
+                    </td>
+                  )
+                }
               </tr>
             ))}
           </tbody>
