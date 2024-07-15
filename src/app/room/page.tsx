@@ -1,5 +1,5 @@
 'use client'
-import { push, get, ref, set, onValue } from "firebase/database";
+import { push, get, ref, set, update, onValue } from "firebase/database";
 import { useEffect, useState } from "react";
 import { database } from "../../lib/firebase/config";
 import { useRouter } from "next/navigation";
@@ -16,8 +16,8 @@ type Room = {
 const Room = () => {
 
   const [rooms, setRooms] = useState<Room[]>([])
-
   const [idPlayer, setIdPlayer] = useState<any>(null)
+  const router = useRouter()
 
   useEffect(() => {
     const usesRef = ref(database, 'rooms')
@@ -39,8 +39,6 @@ const Room = () => {
 
   }, [])
 
-  const router = useRouter()
-
   const handAddPlayerRoom = (idRoom: string, idPlayer: string) => {
     if (idPlayer !== '') {
       try {
@@ -60,6 +58,38 @@ const Room = () => {
     }
   }
 
+
+  const handleJoinRoom = async (roomId: string) => {
+    if (!idPlayer) return;
+
+    const playerRoomRef = ref(database, 'player-x-room');
+    const playerRoomSnapshot = await get(playerRoomRef);
+    if (playerRoomSnapshot.exists()) {
+      const playerRoomsData: any = playerRoomSnapshot.val();
+      const playerRoomKeys = Object.keys(playerRoomsData);
+      const existingPlayerRoom = playerRoomKeys.find(
+        (key) => playerRoomsData[key].id_player === idPlayer && playerRoomsData[key].id_room === roomId
+      );
+
+      if (existingPlayerRoom) {
+        update(ref(database, `player-x-room/${existingPlayerRoom}`), { del_flg: 0 });
+        router.push(`/room/${roomId}`);
+        return;
+      }
+    }
+
+    const newPlayerRoomRef = push(ref(database, 'player-x-room'));
+    const newPlayerRoom = {
+      id_player: idPlayer,
+      id_room: roomId,
+      del_flg: 0,
+    };
+
+    set(newPlayerRoomRef, newPlayerRoom).then(() => {
+      router.push(`/room/${roomId}`);
+    });
+  };
+
   if (idPlayer) {
     return (
       <div className="bg-slate-900 text-white min-h-screen pt-16">
@@ -77,7 +107,7 @@ const Room = () => {
                 <button
                   className="bg-slate-900 rounded hover:bg-slate-700 mt-4 p-2"
                   onClick={() => {
-                    handAddPlayerRoom(room.id, idPlayer)
+                    handleJoinRoom(room.id)
                   }}
                 >
                   Tham gia

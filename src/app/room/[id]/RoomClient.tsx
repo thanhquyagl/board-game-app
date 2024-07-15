@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from "react";
-import { ref, remove, get, onValue } from "firebase/database";
+import { ref, remove, get, update, onValue } from "firebase/database";
 import { database } from "../../../lib/firebase/config";
 import { useRouter } from "next/navigation";
 import { Modal } from "antd";
@@ -27,11 +27,11 @@ const RoomClient = ({ params }: Props) => {
   const router = useRouter();
   const [idAdmin, setIdAdmin] = useState<string | null>(null);
   const [idPlayer, setIdPlayer] = useState<string | null>(null);
+  const [idPlayerRoom, setIdPlayerRoom] = useState<string | null>(null);
   const [open, setOpen] = useState<boolean>(false);
   const [openPopupRemovePlayer, setOpenPopupRemovePlayer] = useState<boolean>(false);
   const [openPopupPlayerOut, setOpenPopupPlayerOut] = useState<boolean>(false);
   const [playerToRemove, setPlayerToRemove] = useState<string | null>(null);
-
 
   const handleOk = () => {
     handleDeleteRoom();
@@ -97,6 +97,12 @@ const RoomClient = ({ params }: Props) => {
         const playerResults = await Promise.all(playerPromises);
         const playerData = playerResults.reduce((acc, curr) => ({ ...acc, ...curr }), {});
         setPlayers(playerData);
+
+        // Tìm và thiết lập idPlayerRoom cho người chơi hiện tại
+        const currentPlayerRoom = playerRoomsData.find((pr: any) => pr.id_player === idPlayer && pr.id_room === id);
+        if (currentPlayerRoom) {
+          setIdPlayerRoom(currentPlayerRoom.id);
+        }
       } else {
         console.log('Không tìm thấy dữ liệu');
       }
@@ -108,7 +114,7 @@ const RoomClient = ({ params }: Props) => {
       unsubscribeRoom();
       unsubscribePlayerRoom();
     };
-  }, [id, router]);
+  }, [id, idPlayer, router]);
 
   const handleDeleteRoom = async () => {
     try {
@@ -145,16 +151,19 @@ const RoomClient = ({ params }: Props) => {
 
   const handleMoveRoom = async () => {
     try {
-      await remove(ref(database, `player-x-room/${idPlayer}`));
-      setOpenPopupRemovePlayer(false);
-      router.push('/room/')
+      if (idPlayerRoom) {
+        const playerRoomRef = ref(database, `player-x-room/${idPlayerRoom}`);
+        await update(playerRoomRef, { del_flg: 1 });
+
+        setOpenPopupRemovePlayer(false);
+        router.push('/room/');
+      }
     } catch (error) {
-      alert('không thể kích người chơi, vui lòng thử lại');
+      alert('không thể thoát người chơi, vui lòng thử lại');
     }
   };
 
   const filteredPlayerxroom = playerxroom.filter(playerRoom => playerRoom.id_room === id);
-console.log(idPlayer);
 
   return (
     <div className="bg-slate-900 text-white min-h-screen pt-16">
@@ -162,14 +171,19 @@ console.log(idPlayer);
         <h1 className="text-4xl font-bold">Phòng - {room ? room.name : 'Loading...'}</h1>
         <div className="flex gap-4 pb-6 my-6 border-b">
           {room && room.admin === idAdmin && (
-            <button
-              className="flex-none bg-red-700 rounded text-slate-50 px-3 py-2 font-bold"
-              onClick={() => {
-                setOpen(true);
-              }}
-            >
-              Back
-            </button>
+            <>
+              <button
+                className="flex-none bg-red-700 rounded text-slate-50 px-3 py-2 font-bold"
+                onClick={() => {
+                  setOpen(true);
+                }}
+              >
+                Back
+              </button>
+              <Modal title="Xoá Phòng" open={open} onOk={handleOk} onCancel={handleCancel} >
+                <p>Bạn thật sự muốn xoá phòng chơi này?</p>
+              </Modal>
+            </>
           )}
           {idPlayer && (
             <>
@@ -179,7 +193,7 @@ console.log(idPlayer);
                   setOpenPopupPlayerOut(true);
                 }}
               >
-                player Back
+                Back
               </button>
               <Modal
                 title="Thoát phòng"
@@ -196,10 +210,6 @@ console.log(idPlayer);
           >
             Setting
           </button>
-
-          <Modal title="Xoá Phòng" open={open} onOk={handleOk} onCancel={handleCancel} >
-            <p>Bạn thật sự muốn xoá phòng chơi này?</p>
-          </Modal>
         </div>
 
         <h2 className="text-2xl pb-4 my-6 border-b">Danh sách người chơi</h2>
@@ -242,7 +252,7 @@ console.log(idPlayer);
           </tbody>
         </table>
       </div>
-    </div >
+    </div>
   );
 };
 
