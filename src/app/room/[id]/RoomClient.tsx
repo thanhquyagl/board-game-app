@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { ref, remove, get, update, onValue } from "firebase/database";
 import { database } from "../../../lib/firebase/config";
 import { useRouter } from "next/navigation";
-import { Modal } from "antd";
+import { Input, Modal, message } from "antd";
 
 type Props = {
   params: { id: string }
@@ -32,6 +32,27 @@ const RoomClient = ({ params }: Props) => {
   const [openPopupRemovePlayer, setOpenPopupRemovePlayer] = useState<boolean>(false);
   const [openPopupPlayerOut, setOpenPopupPlayerOut] = useState<boolean>(false);
   const [playerToRemove, setPlayerToRemove] = useState<string | null>(null);
+  const [openSetting, setOpenSetting] = useState<boolean>(false);
+  const [numberSetting, setNumberSetting] = useState<string>('');
+  const [messageApi, contextHolder] = message.useMessage();
+
+  const key = 'updatable'
+  const openMessage = () => {
+    messageApi.open({
+      key,
+      type: 'loading',
+      content: 'loading...',
+    });
+
+    setTimeout(() => {
+      messageApi.open({
+        key,
+        type: 'success',
+        content: 'Game Start',
+        duration: 2,
+      });
+    }, 1000);
+  };
 
   const handleOk = () => {
     handleDeleteRoom();
@@ -98,7 +119,6 @@ const RoomClient = ({ params }: Props) => {
         const playerData = playerResults.reduce((acc, curr) => ({ ...acc, ...curr }), {});
         setPlayers(playerData);
 
-        // Tìm và thiết lập idPlayerRoom cho người chơi hiện tại
         const currentPlayerRoom = playerRoomsData.find((pr: any) => pr.id_player === idPlayer && pr.id_room === id);
         if (currentPlayerRoom) {
           setIdPlayerRoom(currentPlayerRoom.id);
@@ -163,96 +183,146 @@ const RoomClient = ({ params }: Props) => {
     }
   };
 
+  const handlePlayerLimits = async () => {
+    try {
+      const roomRef = ref(database, `rooms/${room.id}`)
+      await update(roomRef, { limit: numberSetting })
+    }
+    catch (error) {
+      console.log(error);
+    }
+    setNumberSetting('')
+  }
+
   const filteredPlayerxroom = playerxroom.filter(playerRoom => playerRoom.id_room === id);
 
-  return (
-    <div className="bg-slate-900 text-white min-h-screen pt-16">
-      <div className="max-w-3xl mx-auto">
-        <h1 className="text-4xl font-bold">Phòng - {room ? room.name : 'Loading...'}</h1>
-        <div className="flex gap-4 pb-6 my-6 border-b">
-          {room && room.admin === idAdmin && (
-            <>
-              <button
-                className="flex-none bg-red-700 rounded text-slate-50 px-3 py-2 font-bold"
-                onClick={() => {
-                  setOpen(true);
-                }}
-              >
-                Back
-              </button>
-              <Modal title="Xoá Phòng" open={open} onOk={handleOk} onCancel={handleCancel} >
-                <p>Bạn thật sự muốn xoá phòng chơi này?</p>
-              </Modal>
-            </>
-          )}
-          {idPlayer && (
-            <>
-              <button
-                className="flex-none bg-red-700 rounded text-slate-50 px-3 py-2 font-bold"
-                onClick={() => {
-                  setOpenPopupPlayerOut(true);
-                }}
-              >
-                Back
-              </button>
-              <Modal
-                title="Thoát phòng"
-                open={openPopupPlayerOut}
-                onOk={handleOkPopupPlayerOut}
-                onCancel={handleCancelPopupPlayerOut}
-              >
-                <p>Bạn muốn thoát khỏi phòng?</p>
-              </Modal>
-            </>
-          )}
-          <button
-            className="flex-none bg-white rounded text-slate-900 px-3 py-2 font-bold"
-          >
-            Setting
-          </button>
-        </div>
 
-        <h2 className="text-2xl pb-4 my-6 border-b">Danh sách người chơi</h2>
-        <table className="w-full text-center">
-          <tbody>
-            <tr>
-              <th className="px-2 py-4 border-b">STT</th>
-              <th className="px-2 py-4 border-b">Tên Player</th>
-              <th className="px-2 py-4 border-b">Trạng thái</th>
-              {idAdmin && <th className="px-2 py-4 border-b">...</th>}
-            </tr>
-            {filteredPlayerxroom.map((playerRoom, index) => (
-              <tr key={playerRoom.id}>
-                <td className="px-2 py-4 border-b">{index + 1}</td>
-                <td className="px-2 py-4 border-b">{players[playerRoom.id_player]?.name || 'Loading...'}</td>
-                <td className="px-2 py-4 border-b">{playerRoom.del_flg === 0 ? 'Online' : 'Offline'}</td>
-                {idAdmin && (
-                  <td className="px-2 py-4 border-b">
-                    <button
-                      onClick={() => {
-                        setPlayerToRemove(playerRoom.id);
-                        setOpenPopupRemovePlayer(true);
-                      }}
-                      className="bg-red-800 text-slate-50 px-3 py-1 text-sm rounded font-semibold hover:bg-red-500 transition-all"
-                    >
-                      Kích
-                    </button>
-                    <Modal
-                      title="Xoá Người Chơi"
-                      open={openPopupRemovePlayer}
-                      onOk={handleOkPopupPlayer}
-                      onCancel={handleCancelPopupPlayer}
-                    >
-                      <p>Bạn muốn xoá người chơi này khỏi phòng?</p>
-                    </Modal>
-                  </td>
-                )}
+  return (
+    <>
+      {contextHolder}
+      <div className="bg-slate-900 text-white min-h-screen pt-16">
+        <div className="max-w-3xl mx-auto">
+          <h1 className="text-4xl font-bold">Phòng - {room ? room.name : 'Loading...'}</h1>
+          <div className="flex gap-4 pb-6 my-6 border-b">
+            {room && room.admin === idAdmin && (
+              <>
+                <button
+                  className="flex-none bg-red-700 rounded text-slate-50 px-3 py-2 font-bold"
+                  onClick={() => {
+                    setOpen(true);
+                  }}
+                >
+                  Back
+                </button>
+                <Modal title="Xoá Phòng" open={open} onOk={handleOk} onCancel={handleCancel} >
+                  <p>Bạn thật sự muốn xoá phòng chơi này?</p>
+                </Modal>
+
+                <button
+                  className={"flex-none bg-blue-500 rounded text-slate-200 px-3 py-2 font-bold " + (filteredPlayerxroom.length.toString() === room.limit ? '' : 'opacity-50 cursor-no-drop')}
+                  onClick={() => { openMessage() }}
+                >
+                  Start
+                </button>
+              </>
+            )}
+            {idPlayer && (
+              <>
+                <button
+                  className="flex-none bg-red-700 rounded text-slate-50 px-3 py-2 font-bold"
+                  onClick={() => {
+                    setOpenPopupPlayerOut(true);
+                  }}
+                >
+                  Back
+                </button>
+                <Modal
+                  title="Thoát phòng"
+                  open={openPopupPlayerOut}
+                  onOk={handleOkPopupPlayerOut}
+                  onCancel={handleCancelPopupPlayerOut}
+                >
+                  <p>Bạn muốn thoát khỏi phòng?</p>
+                </Modal>
+              </>
+            )}
+            <button
+              className="flex-none bg-white rounded text-slate-900 px-3 py-2 font-bold"
+              onClick={() => { setOpenSetting(true) }}
+            >
+              Setting
+            </button>
+            <Modal
+              title="Cài Số Người Chơi"
+              open={openSetting}
+              onCancel={() => { setOpenSetting(false) }}
+              onOk={() => {
+                if (idAdmin) {
+                  handlePlayerLimits()
+                }
+                setOpenSetting(false)
+              }}
+            >
+              {
+                idAdmin && (
+
+                  <Input
+                    placeholder="Nhập số người chơi"
+                    value={numberSetting}
+                    onChange={e => { setNumberSetting(e.target.value) }}
+                  />
+                )
+              }
+              {idPlayer && room && (
+                <p>
+                  Số người chời: {room.limit !== '0' ? room.limit : '...'}
+                </p>
+              )}
+            </Modal>
+          </div>
+
+          <h2 className="text-2xl pb-4 my-6 border-b">Danh sách người chơi</h2>
+          <table className="w-full text-center">
+            <tbody>
+              <tr>
+                <th className="px-2 py-4 border-b">STT</th>
+                <th className="px-2 py-4 border-b">Tên Player</th>
+                <th className="px-2 py-4 border-b">Trạng thái</th>
+                {idAdmin && <th className="px-2 py-4 border-b">...</th>}
               </tr>
-            ))}
-          </tbody>
-        </table>
+              {filteredPlayerxroom.map((playerRoom, index) => (
+                <tr key={playerRoom.id}>
+                  <td className="px-2 py-4 border-b">{index + 1}</td>
+                  <td className="px-2 py-4 border-b">{players[playerRoom.id_player]?.name || 'Loading...'}</td>
+                  <td className="px-2 py-4 border-b">{playerRoom.del_flg === 0 ? 'Online' : 'Offline'}</td>
+                  {idAdmin && (
+                    <td className="px-2 py-4 border-b">
+                      <button
+                        onClick={() => {
+                          setPlayerToRemove(playerRoom.id);
+                          setOpenPopupRemovePlayer(true);
+                        }}
+                        className="bg-red-800 text-slate-50 px-3 py-1 text-sm rounded font-semibold hover:bg-red-500 transition-all"
+                      >
+                        Kích
+                      </button>
+                      <Modal
+                        title="Xoá Người Chơi"
+                        open={openPopupRemovePlayer}
+                        onOk={handleOkPopupPlayer}
+                        onCancel={handleCancelPopupPlayer}
+                      >
+                        <p>Bạn muốn xoá người chơi này khỏi phòng?</p>
+                      </Modal>
+                    </td>
+                  )}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
