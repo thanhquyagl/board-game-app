@@ -73,9 +73,6 @@ const RoomClient = ({ params }: Props) => {
     handleMoveRoom();
   };
 
-  const handleCancel = () => {
-    setOpen(false);
-  };
 
   const handleCancelPopupPlayer = () => {
     setOpenPopupRemovePlayer(false);
@@ -234,7 +231,7 @@ const RoomClient = ({ params }: Props) => {
                 >
                   Back
                 </button>
-                <Modal title="Xoá Phòng" open={open} onOk={handleOk} onCancel={handleCancel} >
+                <Modal title="Xoá Phòng" open={open} onOk={handleOk} onCancel={() => { setOpen(false) }} >
                   <p>Bạn thật sự muốn xoá phòng chơi này?</p>
                 </Modal>
 

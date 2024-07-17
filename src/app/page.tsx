@@ -25,7 +25,7 @@ export default function Home() {
         name: newRoom,
         slug,
         admin: idAdmin,
-        limit:0,
+        limit: -1,
       });
       sessionStorage.setItem("idAdminStorage", idAdmin);
       setIdAdmin(idAdmin)
