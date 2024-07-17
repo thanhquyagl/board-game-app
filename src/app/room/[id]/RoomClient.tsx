@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import { ref, remove, get, update, onValue } from "firebase/database";
 import { database } from "../../../lib/firebase/config";
 import { useRouter } from "next/navigation";
-import { Input, Modal, message } from "antd";
+import { Input, InputNumber, Modal, Timeline, message } from "antd";
+import type { InputNumberProps } from 'antd';
 
 type Props = {
   params: { id: string }
@@ -33,8 +34,12 @@ const RoomClient = ({ params }: Props) => {
   const [openPopupPlayerOut, setOpenPopupPlayerOut] = useState<boolean>(false);
   const [playerToRemove, setPlayerToRemove] = useState<string | null>(null);
   const [openSetting, setOpenSetting] = useState<boolean>(false);
-  const [numberSetting, setNumberSetting] = useState<string>('');
+  const [numberSetting, setNumberSetting] = useState<any>('');
   const [messageApi, contextHolder] = message.useMessage();
+
+  const onChangeInputNumber: InputNumberProps['onChange'] = (value) => {
+    setNumberSetting(value)
+  };
 
   const key = 'updatable'
   const openMessage = () => {
@@ -136,6 +141,20 @@ const RoomClient = ({ params }: Props) => {
     };
   }, [id, idPlayer, router]);
 
+  useEffect(() => {
+    if (idPlayerRoom) {
+      const playerRoomRef = ref(database, `player-x-room/${idPlayerRoom}`);
+      const unsubscribePlayerRoom = onValue(playerRoomRef, (snapshot) => {
+        const playerRoomData = snapshot.val();
+        if (playerRoomData && playerRoomData.rule === false) {
+          router.push('/room/');
+        }
+      });
+
+      return () => unsubscribePlayerRoom();
+    }
+  }, [idPlayerRoom, router]);
+
   const handleDeleteRoom = async () => {
     try {
       await remove(ref(database, `rooms/${id}`));
@@ -161,9 +180,12 @@ const RoomClient = ({ params }: Props) => {
 
   const handleDeletePlayer = async (idPlayerRoom: string) => {
     try {
-      const playerRoomId = idPlayerRoom;
-      await remove(ref(database, `player-x-room/${playerRoomId}`));
+      const playerRoomRef = ref(database, `player-x-room/${idPlayerRoom}`);
+      await update(playerRoomRef, { rule: false });
       setOpenPopupRemovePlayer(false);
+      setTimeout(() => {
+        remove(ref(database, `player-x-room/${idPlayerRoom}`));
+      }, 1000)
     } catch (error) {
       alert('không thể kích người chơi, vui lòng thử lại');
     }
@@ -174,7 +196,6 @@ const RoomClient = ({ params }: Props) => {
       if (idPlayerRoom) {
         const playerRoomRef = ref(database, `player-x-room/${idPlayerRoom}`);
         await update(playerRoomRef, { del_flg: 1 });
-
         setOpenPopupRemovePlayer(false);
         router.push('/room/');
       }
@@ -191,10 +212,9 @@ const RoomClient = ({ params }: Props) => {
     catch (error) {
       console.log(error);
     }
-    setNumberSetting('')
   }
 
-  const filteredPlayerxroom = playerxroom.filter(playerRoom => playerRoom.id_room === id);
+  const filteredPlayerxroom = playerxroom.filter(playerRoom => playerRoom.id_room === id && playerRoom.rule === true);
 
 
   return (
@@ -219,7 +239,8 @@ const RoomClient = ({ params }: Props) => {
                 </Modal>
 
                 <button
-                  className={"flex-none bg-blue-500 rounded text-slate-200 px-3 py-2 font-bold " + (filteredPlayerxroom.length.toString() === room.limit ? '' : 'opacity-50 cursor-no-drop')}
+                  className={"flex-none bg-blue-500 rounded text-slate-200 px-3 py-2 font-bold " + (filteredPlayerxroom.length === room.limit ? '' : 'opacity-50 cursor-no-drop')}
+                  disabled={filteredPlayerxroom.length === room.limit ? false : true}
                   onClick={() => { openMessage() }}
                 >
                   Start
@@ -265,17 +286,17 @@ const RoomClient = ({ params }: Props) => {
             >
               {
                 idAdmin && (
-
-                  <Input
-                    placeholder="Nhập số người chơi"
-                    value={numberSetting}
-                    onChange={e => { setNumberSetting(e.target.value) }}
+                  <InputNumber
+                    className="w-full"
+                    min={0}
+                    defaultValue={0}
+                    onChange={onChangeInputNumber}
                   />
                 )
               }
               {idPlayer && room && (
                 <p>
-                  Số người chời: {room.limit !== '0' ? room.limit : '...'}
+                  Số người chời: {room.limit !== 0 ? room.limit : '...'}
                 </p>
               )}
             </Modal>

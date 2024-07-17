@@ -5,6 +5,7 @@ import { database } from "../../lib/firebase/config";
 import { useRouter } from "next/navigation";
 import { Alert } from "antd";
 import Link from "next/link";
+import { rule } from "postcss";
 
 
 type Room = {
@@ -72,7 +73,7 @@ const Room = () => {
       );
 
       if (existingPlayerRoom) {
-        update(ref(database, `player-x-room/${existingPlayerRoom}`), { del_flg: 0 });
+        update(ref(database, `player-x-room/${existingPlayerRoom}`), { rule: true, del_flg: 0 });
         router.push(`/room/${roomId}`);
         return;
       }
@@ -83,6 +84,7 @@ const Room = () => {
       id_player: idPlayer,
       id_room: roomId,
       del_flg: 0,
+      rule: true
     };
 
     set(newPlayerRoomRef, newPlayerRoom).then(() => {
