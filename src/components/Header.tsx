@@ -36,7 +36,7 @@ export default function Header() {
   };
 
   return (
-    <div className="bg-slate-900 text-white py-3">
+    <div className="bg-slate-900 text-white py-3 px-2">
       <div className="flex justify-between gap-2 max-w-3xl mx-auto">
         <div className="flex gap-4">
           <Link href='/'>Board Games</Link>

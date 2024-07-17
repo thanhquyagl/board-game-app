@@ -217,7 +217,7 @@ const RoomClient = ({ params }: Props) => {
   return (
     <>
       {contextHolder}
-      <div className="bg-slate-900 text-white min-h-screen pt-16">
+      <div className="bg-slate-900 text-white min-h-screen pt-16 px-2">
         <div className="max-w-3xl mx-auto">
           <h1 className="text-4xl font-bold">Phòng - {room ? room.name : 'Loading...'}</h1>
           <div className="flex gap-4 pb-6 my-6 border-b">

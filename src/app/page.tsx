@@ -55,7 +55,7 @@ export default function Home() {
   };
 
   return (
-    <div className="bg-slate-900 text-white min-h-screen pt-16">
+    <div className="bg-slate-900 text-white min-h-screen pt-16 px-2">
       <div className="max-w-3xl mx-auto">
         <h1 className="text-4xl font-bold">Đăng nhập</h1>
         <hr className="my-6" />
