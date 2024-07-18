@@ -6,6 +6,7 @@ import { push, set, ref } from "firebase/database";
 import { database } from "../lib/firebase/config";
 import Slugify from "../lib/help/slugify";
 import { usePlayer } from "../lib/PlayerContext";
+import { Select } from "antd";
 
 export default function Home() {
   const [newRoom, setNewRoom] = useState('');
@@ -61,12 +62,13 @@ export default function Home() {
         <hr className="my-6" />
         <label className="mt-3 mb-2 block">Tạo room</label>
         <div className="flex gap-2">
-          <input
-            type="text"
-            placeholder="Nhập tên phòng"
-            className="w-full px-3 py-2 rounded text-slate-800 focus:outline-none"
-            value={newRoom}
-            onChange={(e) => setNewRoom(e.target.value)}
+          <Select
+            defaultValue="Chọn phòng"
+            onChange={(e) => { setNewRoom(e) }}
+            options={[
+              { value: 'Ma sói', label: 'Ma Sói' },
+            ]}
+            className="w-full h-[40px]"
           />
           <button
             onClick={handleAddRoom}
