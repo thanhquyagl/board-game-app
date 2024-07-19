@@ -293,7 +293,7 @@ const RoomClient = ({ params }: Props) => {
               }
               {idPlayer && room && (
                 <p>
-                  Số người chời: {room.limit !== 0 ? room.limit : '...'}
+                  Số người chời: {room.limit > 0 ? room.limit : '...'}
                 </p>
               )}
             </Modal>
