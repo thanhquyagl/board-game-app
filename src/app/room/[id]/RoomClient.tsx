@@ -260,9 +260,9 @@ const RoomClient = ({ params }: Props) => {
               </button>
               {idAdmin && (
                 <button
-                  className={"p-2 " + (filteredPlayerxroom.length === room.limit ? '' : 'opacity-50')}
+                  className={"p-2 " + (room ? (filteredPlayerxroom.length === room.limit ? '' : 'opacity-50') : '')}
                   title="Start Game"
-                  disabled={filteredPlayerxroom.length === room.limit ? false : true}
+                  disabled={room ? (filteredPlayerxroom.length === room.limit ? false : true) : true}
                   onClick={() => { openMessage() }}
                 >
                   <PlayCircleOutlined />

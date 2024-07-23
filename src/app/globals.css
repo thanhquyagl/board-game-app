@@ -95,6 +95,11 @@
   transition: all 0.8s ease;
   z-index: 0;
 }
+
 .c-btn__main button:hover::before {
   width: calc(100% + 10px);
+}
+
+.bg-filter {
+  filter: invert(70%) brightness(100%) brightness(10%) contrast(70%);
 }

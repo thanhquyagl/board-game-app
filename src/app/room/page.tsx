@@ -5,7 +5,6 @@ import { database } from "../../lib/firebase/config";
 import { useRouter } from "next/navigation";
 import { Alert } from "antd";
 import Link from "next/link";
-import { rule } from "postcss";
 
 
 type Room = {
@@ -18,6 +17,7 @@ const Room = () => {
 
   const [rooms, setRooms] = useState<Room[]>([])
   const [idPlayer, setIdPlayer] = useState<any>(null)
+  const [namePlayer, setNamePlayer] = useState<string | null>('')
   const router = useRouter()
 
   useEffect(() => {
@@ -33,6 +33,8 @@ const Room = () => {
         console.log('Chưa có phòng chơi nào!')
       }
     })
+
+
     return () => {
       showRoom();
       setIdPlayer(sessionStorage.getItem('idPlayerStorage'))
@@ -40,29 +42,23 @@ const Room = () => {
 
   }, [])
 
-  const handAddPlayerRoom = (idRoom: string, idPlayer: string) => {
-    if (idPlayer !== '') {
-      try {
-        const usesRef = ref(database, 'player-x-room')
-        const newDataRef = push(usesRef)
-        set(newDataRef, {
-          id_room: idRoom,
-          id_player: idPlayer,
-          del_flg: 0
-        })
-        router.push(`/room/${idRoom}`)
-      } catch (error) {
-        console.log(error)
+  useEffect(() => {
+    const usesRefPlayer = ref(database, `players/${idPlayer}/name`)
+    const showNamePlayer = onValue(usesRefPlayer, async (snapshot) => {
+      if (snapshot.exists()) {
+        setNamePlayer(snapshot.val())
       }
-    } else {
-      router.push(`/room/${idRoom}`)
+      else {
+        console.log('error');
+      }
+    })
+    return () => {
+      showNamePlayer();
     }
-  }
-
+  }, [idPlayer])
 
   const handleJoinRoom = async (roomId: string) => {
     if (!idPlayer) return;
-
     const playerRoomRef = ref(database, 'player-x-room');
     const playerRoomSnapshot = await get(playerRoomRef);
     if (playerRoomSnapshot.exists()) {
@@ -94,25 +90,25 @@ const Room = () => {
 
   if (idPlayer) {
     return (
-      <div className="bg-slate-900 text-white min-h-screen pt-16 px-2">
+      <div className="bg-slate-900 bg-hero-standard  text-white min-h-screen pt-16 px-2">
+        <div className="absolute top-0 left-0 bg-hero-standard w-full h-full bg-filter"></div>
 
-        <div className="max-w-3xl mx-auto ">
+        <div className="relative max-w-2xl mx-auto">
+          <p className="text-xl font-medium border-b border-dashed py-4 mb-4">Người Chơi: {namePlayer}</p>
+          <h2 className="text-xl font-medium border-b border-dashed py-4 mb-4">Danh Sách Phòng</h2>
 
-          <h1 className="text-4xl font-bold">List Rooms</h1>
-
-          <hr className="mt-3 mb-10" />
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4">
 
             {rooms.map((room) => (
-              <div key={room.id} className="px-4 py-2 bg-slate-800 rounded">
-                <h2 className="text-2xl font-bold">{room.name}</h2>
+              <div key={room.id} className="w-full group-input border-b border-dashed py-4 mb-4">
                 <button
-                  className="bg-slate-900 rounded hover:bg-slate-700 mt-4 p-2"
+                  className="w-full p-2 flex justify-between"
                   onClick={() => {
                     handleJoinRoom(room.id)
                   }}
                 >
-                  Tham gia
+                  <span>Phòng {room.name}</span>
+                  <span>4/{room.limit}</span>
                 </button>
               </div>
             ))
@@ -123,8 +119,9 @@ const Room = () => {
     )
   } else {
     return (
-      <div className="bg-slate-900 text-white min-h-screen pt-16 px-2">
-        <div className="max-w-3xl mx-auto ">
+      <div className="bg-slate-900 bg-hero-standard  text-white min-h-screen pt-16 px-2">
+        <div className="absolute top-0 left-0 bg-hero-standard w-full h-full bg-filter"></div>
+        <div className="relative max-w-2xl mx-auto">
           <h1 className="text-4xl font-bold">List Rooms</h1>
           <hr className="my-3" />
           <Alert

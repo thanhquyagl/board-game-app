@@ -35,7 +35,7 @@ export default function Header() {
   };
 
   return (
-    <div className="bg-transparent absolute top-0 left-0 w-full text-white">
+    <div className="bg-transparent absolute top-0 left-0 w-full text-white z-10">
       <div className="flex justify-between gap-2 max-w-2xl  min-h-[60px] mx-auto py-3 px-2">
         <button
           className="px-2 hidden"

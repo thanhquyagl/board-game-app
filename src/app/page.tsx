@@ -36,7 +36,7 @@ export default function Home() {
           name: newRoom,
           slug,
           admin: idAdmin,
-          limit: -1,
+          limit: 12,
         });
         sessionStorage.setItem("idAdminStorage", idAdmin);
         setIdAdmin(idAdmin)
@@ -71,8 +71,9 @@ export default function Home() {
   return (
     <>
       {contextHolder}
-      <div className="bg-slate-900 bg-hero-standard text-white min-h-screen pt-16 px-2">
-        <div className="max-w-2xl mx-auto">
+      <div className="bg-slate-900 bg-hero-standard  text-white min-h-screen pt-16 px-2">
+        <div className="absolute top-0 left-0 bg-hero-standard w-full h-full bg-filter"></div>
+        <div className="max-w-2xl mx-auto relative">
           <h2 className="text-xl font-medium text-center border-b border-dashed py-4 mb-4">TẠO PHÒNG</h2>
           <div className="border-b border-dashed pb-4">
             <label className="mt-3 mb-2 block">Tên Phòng:</label>
