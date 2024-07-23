@@ -2,3 +2,99 @@
 @tailwind components;
 @tailwind utilities;
 
+.input-select .ant-select-selector {
+  background-color: transparent !important;
+  color: #fff;
+  border: none !important;
+}
+
+.input-select .ant-select-selector:focus {
+  box-shadow: none !important;
+}
+.ant-select-focused:where(
+    .css-dev-only-do-not-override-98ntnt
+  ).ant-select-outlined:not(.ant-select-disabled):not(
+    .ant-select-customize-input
+  ):not(.ant-pagination-size-changer)
+  .ant-select-selector {
+  box-shadow: none !important;
+}
+
+:where(
+    .css-dev-only-do-not-override-98ntnt
+  ).ant-select-single.ant-select-show-arrow
+  .ant-select-selection-item {
+  color: #fff;
+}
+
+.input-select .ant-select-arrow {
+  color: #fff !important;
+}
+
+.group-input {
+  position: relative;
+  display: flex;
+  gap: 4px;
+}
+
+.group-input::before,
+.group-input::after {
+  content: "";
+  width: 5px;
+  border: 1px solid #fff;
+}
+
+.group-input::before {
+  border-right: 0;
+}
+
+.group-input::after {
+  border-left: 0;
+}
+
+.c-btn__main {
+  position: relative;
+  display: inline-block;
+}
+
+.c-btn__main::before,
+.c-btn__main::after {
+  position: absolute;
+  top: 0;
+  display: block;
+  content: "";
+  width: 5px;
+  height: 100%;
+  border: 1px solid #fff;
+}
+
+.c-btn__main::before {
+  left: -5px;
+  border-right: 0;
+}
+
+.c-btn__main::after {
+  right: -5px;
+  border-left: 0;
+}
+
+.c-btn__main button {
+  position: relative;
+}
+
+.c-btn__main button::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 0;
+  height: 100%;
+  transform: translateX(-50%);
+  transform-origin: center;
+  background-color: #fff;
+  transition: all 0.8s ease;
+  z-index: 0;
+}
+.c-btn__main button:hover::before {
+  width: calc(100% + 10px);
+}

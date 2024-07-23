@@ -1,9 +1,8 @@
 'use client'
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Dropdown, Button, Space } from "antd";
-import { DownOutlined, LogoutOutlined } from "@ant-design/icons";
+import { LeftOutlined, LogoutOutlined } from "@ant-design/icons";
 import type { MenuProps } from "antd";
 import { usePlayer } from "../lib/PlayerContext";
 import { database } from "../lib/firebase/config";
@@ -36,12 +35,17 @@ export default function Header() {
   };
 
   return (
-    <div className="bg-slate-900 text-white py-3 px-2 h-[40px]">
-      <div className="flex justify-between gap-2 max-w-3xl mx-auto">
-        <div className="flex gap-4">
-          <Link href='/'>Board Games</Link>
+    <div className="bg-transparent absolute top-0 left-0 w-full text-white">
+      <div className="flex justify-between gap-2 max-w-2xl  min-h-[60px] mx-auto py-3 px-2">
+        <button
+          className="px-2 hidden"
+        >
+          <LeftOutlined /> Back
+        </button>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+          <h1 className="text-2xl font-semibold"> AGL Game Board</h1>
         </div>
-        {
+        {/* {
           idPlayer && (
             <Dropdown menu={menuProps}>
               <Button>
@@ -55,7 +59,7 @@ export default function Header() {
         }
         {
           idAdmin && "Hi Admin"
-        }
+        } */}
       </div>
     </div>
   )
