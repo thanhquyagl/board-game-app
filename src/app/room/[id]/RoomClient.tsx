@@ -1,12 +1,12 @@
 'use client';
 
 import { useEffect, useState } from "react";
-import { ref, remove, get, update, onValue } from "firebase/database";
+import { ref, remove, get, update, onValue, refFromURL } from "firebase/database";
 import { database } from "../../../lib/firebase/config";
 import { useRouter } from "next/navigation";
-import { Input, InputNumber, Modal, message } from "antd";
+import { InputNumber, Modal, message } from "antd";
 import type { InputNumberProps } from 'antd';
-import { SendOutlined, CloseOutlined, SettingOutlined, PlayCircleOutlined } from "@ant-design/icons";
+import { LeftOutlined, CloseOutlined, SettingOutlined, PlayCircleOutlined } from "@ant-design/icons";
 import Image from "next/image";
 
 type Props = {
@@ -204,9 +204,9 @@ const RoomClient = ({ params }: Props) => {
   const filteredPlayerxroom = playerxroom.filter(playerRoom => playerRoom.id_room === id && playerRoom.rule === true);
 
   var indents = [];
-  for (var i = 0; i < 9; i++) {
+  for (var i = 0; i < 16; i++) {
     indents.push(
-      <div className="h-[200px] bg-slate-900 bg-wolvesville-large bg-contain bg-no-repeat bg-bottom relative">
+      <div className="h-[180px] bg-slate-900 bg-wolvesville-large bg-contain bg-no-repeat bg-bottom relative border border-slate-500" key={i}>
         <p className="bg-slate-600 px-4 py-2 rounded absolute top-2 left-1/2 -translate-x-1/2 text-nowrap">1</p>
         <span className="absolute top-[60px] left-1/2 -translate-x-1/2"> </span>
         {idAdmin && (
@@ -226,17 +226,18 @@ const RoomClient = ({ params }: Props) => {
       </div>
     );
   }
-
+  console.log(filteredPlayerxroom);
   return (
     <>
       {contextHolder}
-      <div className="bg-slate-900 bg-hero-standard backdrop-filter text-white p-2 min-h-[calc(100vh-40px)]">
-        <div className="container max-w-2xl mx-auto">
-          <div className="relative flex items-center justify-between px-2 py-1 border">
-            <h1 className="text-center font-medium text-2xl uppercase hidden">Phòng {room && room.name}</h1>
+      <div className="bg-transparent absolute top-0 left-0 w-full text-white z-10">
+        <div className="flex justify-between gap-2 max-w-2xl  min-h-[60px] mx-auto py-3 px-2">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+            <h1 className="text-2xl font-semibold"> AGL Game Board</h1>
+          </div>
+          <>
             <button
-              className="p-2"
-              title="Thoát phòng"
+              className="px-2"
               onClick={() => {
                 if (idAdmin) {
                   setOpen(true);
@@ -245,112 +246,127 @@ const RoomClient = ({ params }: Props) => {
                 }
               }}
             >
-              <CloseOutlined />
+              <LeftOutlined />
+              <span>Back</span>
             </button>
-            <div className="text-center w-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-              10s
-            </div>
-            <div>
-              <button
-                className="p-2"
-                title="Setting"
-                onClick={() => { setOpenSetting(true) }}
-              >
-                <SettingOutlined />
-              </button>
-              {idAdmin && (
-                <button
-                  className={"p-2 " + (room ? (filteredPlayerxroom.length === room.limit ? '' : 'opacity-50') : '')}
-                  title="Start Game"
-                  disabled={room ? (filteredPlayerxroom.length === room.limit ? false : true) : true}
-                  onClick={() => { openMessage() }}
-                >
-                  <PlayCircleOutlined />
-                </button>
-              )}
-            </div>
-            <Modal title="Xoá Phòng" open={open} onOk={handleOk} onCancel={() => { setOpen(false) }} >
-              <p>Bạn thật sự muốn xoá phòng chơi này?</p>
-            </Modal>
-            <Modal
-              title="Thoát phòng"
-              open={openPopupPlayerOut}
-              onOk={handleOkPopupPlayerOut}
-              onCancel={() => {
-                setOpenPopupPlayerOut(false);
-                setPlayerToRemove(null);
-              }}
+            <button
+              className="p-2"
+              title="Setting"
+              onClick={() => { setOpenSetting(true) }}
             >
-              <p>Bạn muốn thoát khỏi phòng?</p>
-            </Modal>
-            <Modal
-              title="Cài Số Người Chơi"
-              open={openSetting}
-              onCancel={() => { setOpenSetting(false) }}
-              onOk={() => {
-                if (idAdmin) {
-                  handlePlayerLimits()
-                }
-                setOpenSetting(false)
-              }}
-            >
-              {
-                idAdmin && (
-                  <InputNumber
-                    className="w-full"
-                    min={0}
-                    defaultValue={0}
-                    onChange={onChangeInputNumber}
-                  />
-                )
-              }
-              {idPlayer && room && (
-                <p>
-                  Số người chời: {room.limit > 0 ? room.limit : '...'}
-                </p>
-              )}
-            </Modal>
-            <Modal
-              title="Xoá Người Chơi"
-              open={openPopupRemovePlayer}
-              onOk={handleOkPopupPlayer}
-              onCancel={() => {
-                setOpenPopupRemovePlayer(false);
-                setPlayerToRemove(null);
-              }}
-            >
-              <p>Bạn muốn xoá người chơi này khỏi phòng?</p>
-            </Modal>
-          </div>
-          <div className="grid grid-cols-3 items-start gap-4 mt-2">
-            {/* {filteredPlayerxroom.map((playerRoom, index) => (
-              <div key={index}>
-              </div>
-            ))} */}
-            {
-              indents
+              <SettingOutlined />
+            </button>
+          </>
+        </div>
+      </div>
+      <div>
+        <Modal title="Xoá Phòng" open={open} onOk={handleOk} onCancel={() => { setOpen(false) }} >
+          <p>Bạn thật sự muốn xoá phòng chơi này?</p>
+        </Modal>
+        <Modal
+          title="Thoát phòng"
+          open={openPopupPlayerOut}
+          onOk={handleOkPopupPlayerOut}
+          onCancel={() => {
+            setOpenPopupPlayerOut(false);
+            setPlayerToRemove(null);
+          }}
+        >
+          <p>Bạn muốn thoát khỏi phòng?</p>
+        </Modal>
+        <Modal
+          title="Cài Số Người Chơi"
+          open={openSetting}
+          onCancel={() => { setOpenSetting(false) }}
+          onOk={() => {
+            if (idAdmin) {
+              handlePlayerLimits()
             }
-
+            setOpenSetting(false)
+          }}
+        >
+          {
+            idAdmin && (
+              <InputNumber
+                className="w-full"
+                min={0}
+                defaultValue={0}
+                onChange={onChangeInputNumber}
+              />
+            )
+          }
+          {idPlayer && room && (
+            <p>
+              Số người chời: {room.limit > 0 ? room.limit : '...'}
+            </p>
+          )}
+        </Modal>
+        <Modal
+          title="Xoá Người Chơi"
+          open={openPopupRemovePlayer}
+          onOk={handleOkPopupPlayer}
+          onCancel={() => {
+            setOpenPopupRemovePlayer(false);
+            setPlayerToRemove(null);
+          }}
+        >
+          <p>Bạn muốn xoá người chơi này khỏi phòng?</p>
+        </Modal>
+      </div>
+      <div className="bg-slate-900 bg-hero-standard  text-white min-h-screen pt-16 pb-2 px-2 flex">
+        <div className="absolute top-0 left-0 bg-hero-standard w-full h-full bg-filter"></div>
+        <div className="relative max-w-2xl mx-auto w-full flex flex-col">
+          <div className="relative text-center px-2 py-1 border">
+            [ {room && room.id} ] [ {room && room.name} ]
           </div>
-          <div className="mt-auto">
-            <div className="mt-2 p-2 bg-slate-600 h-full overflow-auto rounded scrollbar-thin scrollbar-gutter-auto scrollbar-track-white scrollbar-thumb-black">
-              <div className="my-2">
-                <span className="bg-slate-800 px-2 py-1 rounded mr-2">1 x player :</span>
-                <span>số 1 là ma sói</span>
+          <div className="grid grid-cols-4 items-start gap-1 mt-2 mb-auto">
+            {filteredPlayerxroom.map((playerRoom, index) => (
+              <div className="h-[180px] bg-slate-900 bg-wolvesville-large bg-contain bg-no-repeat bg-bottom relative border border-slate-500" key={index}>
+                <p className="bg-slate-600 px-2 py-1 rounded absolute top-2 left-1/2 -translate-x-1/2 text-nowrap text-sm">{index + 1} x {players[playerRoom.id_player]?.name || '...'}</p>
+                <span className="absolute top-[40px] left-1/2 -translate-x-1/2">{playerRoom.del_flg !== 0 && 'Off'}</span>
+                {idAdmin && (
+                  <button
+                    className="absolute bottom-3 right-3"
+                    onClick={() => {
+                      setPlayerToRemove(playerRoom.id)
+                      setOpenPopupRemovePlayer(true)
+                    }}
+                  >
+                    ...
+                  </button>
+                )}
+                <Image
+                  className="absolute bottom-0 left-1/2 -translate-x-1/2 max-w-[75%]"
+                  src="/assets/avatar-03.png"
+                  width={500}
+                  height={500}
+                  alt="Picture of the author"
+                />
+              </div>
+            ))}
+          </div>
+          {idAdmin ? (
+            <div className="text-center">
+              <div className="c-btn__main mt-3">
+                <button
+                  onClick={() => { openMessage() }}
+                  className="flex-none bg-transparent text-white px-6 py-1 font-semibold hover:text-slate-900"
+                  disabled={room ? (filteredPlayerxroom.length === room.limit ? false : true) : true}
+                >
+                  <span className="relative">Bắt Đầu Game</span>
+                </button>
               </div>
             </div>
-            <div className="flex mt-2 gap-2 relative">
-              <input type="text"
-                className="w-full text-slate-900 p-2 pr-[50px] rounded focus:outline-none"
-                placeholder="Type your message"
-              />
-              <button
-                className=" text-slate-500 px-4 py-2 rounded absolute top-0 right-0 focus:outline-none"
-              >
-                <SendOutlined />
-              </button>
+          ) : (
+            <div className="text-center">
+              <div className="c-btn__main mt-3">
+                <div className="py-1 px-6">
+                  <span className="relative">Chờ Quản Trò Bắt Đầu Game</span>
+                </div>
+              </div>
             </div>
-          </div>
+
+          )}
         </div>
       </div>
     </>

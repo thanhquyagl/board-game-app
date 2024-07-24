@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { database } from "../../lib/firebase/config";
 import { useRouter } from "next/navigation";
 import { Alert } from "antd";
+import { LeftOutlined } from "@ant-design/icons";
 import Link from "next/link";
 
 
@@ -87,35 +88,55 @@ const Room = () => {
       router.push(`/room/${roomId}`);
     });
   };
+  console.log(rooms);
+  
 
   if (idPlayer) {
     return (
-      <div className="bg-slate-900 bg-hero-standard  text-white min-h-screen pt-16 px-2">
-        <div className="absolute top-0 left-0 bg-hero-standard w-full h-full bg-filter"></div>
-
-        <div className="relative max-w-2xl mx-auto">
-          <p className="text-xl font-medium border-b border-dashed py-4 mb-4">Người Chơi: {namePlayer}</p>
-          <h2 className="text-xl font-medium border-b border-dashed py-4 mb-4">Danh Sách Phòng</h2>
-
-          <div className="grid grid-cols-1 gap-4">
-
-            {rooms.map((room) => (
-              <div key={room.id} className="w-full group-input border-b border-dashed py-4 mb-4">
-                <button
-                  className="w-full p-2 flex justify-between"
-                  onClick={() => {
-                    handleJoinRoom(room.id)
-                  }}
-                >
-                  <span>Phòng {room.name}</span>
-                  <span>4/{room.limit}</span>
-                </button>
-              </div>
-            ))
-            }
+      <>
+        <div className="bg-transparent absolute top-0 left-0 w-full text-white z-10">
+          <div className="flex justify-between gap-2 max-w-2xl  min-h-[60px] mx-auto py-3 px-2">
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+              <h1 className="text-2xl font-semibold"> AGL Game Board</h1>
+            </div>
+            <button
+              className="px-2"
+              onClick={() => {
+                router.push('/');
+              }}
+            >
+              <LeftOutlined />
+              <span>Back</span>
+            </button>
           </div>
         </div>
-      </div>
+        <div className="bg-slate-900 bg-hero-standard  text-white min-h-screen pt-16 px-2">
+          <div className="absolute top-0 left-0 bg-hero-standard w-full h-full bg-filter"></div>
+
+          <div className="relative max-w-2xl mx-auto">
+            <p className="text-xl font-medium border-b border-dashed py-4 mb-4">Người Chơi: {namePlayer}</p>
+            <h2 className="text-xl font-medium border-b border-dashed py-4 mb-4">Danh Sách Phòng</h2>
+
+            <div className="grid grid-cols-1 gap-4">
+
+              {rooms.map((room) => (
+                <div key={room.id} className="w-full group-input border-b border-dashed py-4 mb-4">
+                  <button
+                    className="w-full p-2 flex justify-between"
+                    onClick={() => {
+                      handleJoinRoom(room.id)
+                    }}
+                  >
+                    <span>Phòng {room.name}</span>
+                    <span>4/{room.limit}</span>
+                  </button>
+                </div>
+              ))
+              }
+            </div>
+          </div>
+        </div>
+      </>
     )
   } else {
     return (
