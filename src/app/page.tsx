@@ -9,7 +9,9 @@ import { usePlayer } from "../lib/PlayerContext";
 import { Select, message } from "antd";
 
 export default function Home() {
-  const [newRoom, setNewRoom] = useState('');
+  const [nameRoom, setNameRoom] = useState('');
+  const [typeRoom, setTypeRoom] = useState('');
+  const [passRoom, setPassRoom] = useState('');
   const [newPlayer, setNewPlayer] = useState('');
   const { setIdPlayer, setIdAdmin } = usePlayer();
   const router = useRouter();
@@ -24,23 +26,25 @@ export default function Home() {
   };
 
   const handleAddRoom = () => {
-    if (newRoom) {
+    if (nameRoom) {
       try {
-        const slug = Slugify(newRoom);
+        const slug = Slugify(nameRoom);
         const usesRef = ref(database, 'rooms');
         const newDataRef = push(usesRef);
         const roomId = newDataRef.key;
         const idAdmin = newDataRef.key as string;
         set(newDataRef, {
           id: roomId,
-          name: newRoom,
+          name: nameRoom,
           slug,
           admin: idAdmin,
-          limit: 12,
+          limit: 16,
+          type: typeRoom,
+          pass: passRoom,
         });
         sessionStorage.setItem("idAdminStorage", idAdmin);
         setIdAdmin(idAdmin)
-        setNewRoom('');
+        setNameRoom('');
         router.push(`/room/${roomId}?`);
       } catch (error) {
         console.log(error);
@@ -71,13 +75,13 @@ export default function Home() {
   return (
     <>
       {contextHolder}
-    <div className="bg-transparent absolute top-0 left-0 w-full text-white z-10">
-      <div className="flex justify-between gap-2 max-w-2xl  min-h-[60px] mx-auto py-3 px-2">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-          <h1 className="text-2xl font-semibold"> AGL Game Board</h1>
+      <div className="bg-transparent absolute top-0 left-0 w-full text-white z-10">
+        <div className="flex justify-between gap-2 max-w-2xl  min-h-[60px] mx-auto py-3 px-2">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+            <h1 className="text-2xl font-semibold"> AGL Game Board</h1>
+          </div>
         </div>
       </div>
-    </div>
       <div className="bg-slate-900 bg-hero-standard  text-white min-h-screen pt-16 px-2">
         <div className="absolute top-0 left-0 bg-hero-standard w-full h-full bg-filter"></div>
         <div className="max-w-2xl mx-auto relative">
@@ -88,6 +92,8 @@ export default function Home() {
               <input
                 type="text"
                 className="bg-transparent border-b px-2 py-1 relative focus:outline-none w-full"
+                value={nameRoom}
+                onChange={(e) => setNameRoom(e.target.value)}
               />
             </div>
             <label className="mt-3 mb-2 block">Mật Khẩu <span className="text-xs">(Tùy Chọn)</span>:</label>
@@ -95,6 +101,8 @@ export default function Home() {
               <input
                 type="text"
                 className="bg-transparent border-b px-2 py-1 relative focus:outline-none w-full"
+                value={passRoom}
+                onChange={(e) => setPassRoom(e.target.value)}
               />
             </div>
 
@@ -102,7 +110,7 @@ export default function Home() {
             <div className="mb-6 group-input">
               <Select
                 defaultValue="Chọn game"
-                onChange={(e) => { setNewRoom(e) }}
+                onChange={(e) => { setTypeRoom(e) }}
                 options={[
                   { value: 'Werewolf', label: 'Werewolf' },
                   { value: 'Uno', label: 'Uno' },

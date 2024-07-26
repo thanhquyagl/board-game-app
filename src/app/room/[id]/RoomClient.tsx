@@ -1,12 +1,14 @@
 'use client';
 
 import { useEffect, useState } from "react";
-import { ref, remove, get, update, onValue, refFromURL } from "firebase/database";
+import { ref, remove, get, update, onValue } from "firebase/database";
 import { database } from "../../../lib/firebase/config";
 import { useRouter } from "next/navigation";
-import { InputNumber, Modal, message } from "antd";
-import type { InputNumberProps } from 'antd';
-import { LeftOutlined, CloseOutlined, SettingOutlined, PlayCircleOutlined } from "@ant-design/icons";
+
+import { Form, InputNumber, Modal, Input, Radio, Space, message } from "antd";
+import type { InputNumberProps, RadioChangeEvent, FormProps } from 'antd';
+
+import { LeftOutlined, SettingOutlined } from "@ant-design/icons";
 import Image from "next/image";
 
 type Props = {
@@ -21,6 +23,22 @@ type PlayerRoom = {
   del_flg: number;
   [key: string]: any;
 };
+
+type FieldType = {
+  roomname?: string;
+  roompass?: string;
+  roomlimit?: number;
+  rolekengoc?: number;
+  rolethosan?: number;
+  roletientri?: number;
+  rolesoi?: number;
+  rolebansoi?: number;
+  rolephuthuy?: number;
+  rolebaove?: number;
+  roledanlang?: number;
+  statusrole?: string;
+};
+
 
 const RoomClient = ({ params }: Props) => {
   const id = params.id;
@@ -38,9 +56,25 @@ const RoomClient = ({ params }: Props) => {
   const [openSetting, setOpenSetting] = useState<boolean>(false);
   const [numberSetting, setNumberSetting] = useState<any>('');
   const [messageApi, contextHolder] = message.useMessage();
+  const [nameRoom, setNameRoom] = useState<string>('');
+  const [onOffRole, setOnOffRole] = useState(1);
+
+
+  const onFinish: FormProps<FieldType>['onFinish'] = (values) => {
+    console.log('Success:', values);
+  };
+
+  const onFinishFailed: FormProps<FieldType>['onFinishFailed'] = (errorInfo) => {
+    console.log('Failed:', errorInfo);
+  };
 
   const onChangeInputNumber: InputNumberProps['onChange'] = (value) => {
     setNumberSetting(value)
+  };
+
+  const onChange = (e: RadioChangeEvent) => {
+    console.log('radio checked', e.target.value);
+    setOnOffRole(e.target.value);
   };
 
   const key = 'updatable'
@@ -82,6 +116,7 @@ const RoomClient = ({ params }: Props) => {
     const unsubscribeRoom = onValue(roomRef, (snapshot) => {
       if (snapshot.exists()) {
         setRoom(snapshot.val());
+        setNameRoom(snapshot.val().name)
       } else {
         router.push('/room/');
       }
@@ -226,7 +261,7 @@ const RoomClient = ({ params }: Props) => {
       </div>
     );
   }
-  console.log(filteredPlayerxroom);
+
   return (
     <>
       {contextHolder}
@@ -272,35 +307,158 @@ const RoomClient = ({ params }: Props) => {
             setPlayerToRemove(null);
           }}
         >
-          <p>Bạn muốn thoát khỏi phòng?</p>
         </Modal>
+
         <Modal
-          title="Cài Số Người Chơi"
+          title="Cài Đặt"
           open={openSetting}
+          footer={null}
           onCancel={() => { setOpenSetting(false) }}
-          onOk={() => {
-            if (idAdmin) {
-              handlePlayerLimits()
-            }
-            setOpenSetting(false)
-          }}
+        // onOk={() => {
+        //   if (idAdmin) {
+        //     handlePlayerLimits()
+        //   }
+        //   setOpenSetting(false)
+        // }}
         >
-          {
-            idAdmin && (
-              <InputNumber
-                className="w-full"
-                min={0}
-                defaultValue={0}
-                onChange={onChangeInputNumber}
-              />
-            )
-          }
-          {idPlayer && room && (
-            <p>
-              Số người chời: {room.limit > 0 ? room.limit : '...'}
-            </p>
-          )}
+          <Form
+            name="basic"
+            labelCol={{ span: 4 }}
+            wrapperCol={{ span: 20 }}
+            style={{ maxWidth: 600 }}
+            onFinish={onFinish}
+            onFinishFailed={onFinishFailed}
+            autoComplete="on"
+            initialValues={{
+              roomname: nameRoom,
+              rolebansoi: 1,
+              statusrole: 1
+            }}
+          >
+            <Form.Item<FieldType>
+              label="Tên Phòng"
+              name="roomname"
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item<FieldType>
+              label="Mật Khẩu"
+              name="roompass"
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item<FieldType>
+              wrapperCol={{ offset: 0, span: 16 }}
+              labelCol={{ offset: 0, span: 8 }}
+              label="Số Lượng Người Chơi"
+              name="roomlimit"
+            >
+              <Input />
+            </Form.Item>
+            <p className="py-2 border-t border-dashed mb-3">Số Lượng Các Vai Trò:</p>
+            <div className="grid grid-cols-2 gap-x-3 border-b border-dashed mb-2">
+              <Form.Item<FieldType>
+                labelCol={{ offset: 0, span: 7 }}
+                wrapperCol={{ offset: 0, span: 17 }}
+                label="Kẻ Ngốc"
+                name="rolebansoi"
+              >
+                <InputNumber min={1} max={10} className="w-full" />
+              </Form.Item>
+              <Form.Item<FieldType>
+                labelCol={{ offset: 0, span: 7 }}
+                wrapperCol={{ offset: 0, span: 17 }}
+                label="Thợ Săn"
+                name="rolebansoi"
+              >
+                <InputNumber min={1} max={10} className="w-full" />
+              </Form.Item>
+              <Form.Item<FieldType>
+                labelCol={{ offset: 0, span: 7 }}
+                wrapperCol={{ offset: 0, span: 17 }}
+                label="Tiên Tri"
+                name="rolebansoi"
+              >
+                <InputNumber min={1} max={10} className="w-full" />
+              </Form.Item>
+              <Form.Item<FieldType>
+                labelCol={{ offset: 0, span: 7 }}
+                wrapperCol={{ offset: 0, span: 17 }}
+                label="Sói"
+                name="rolebansoi"
+              >
+                <InputNumber min={1} max={10} className="w-full" />
+              </Form.Item>
+              <Form.Item<FieldType>
+                labelCol={{ offset: 0, span: 7 }}
+                wrapperCol={{ offset: 0, span: 17 }}
+                label="Tiên Tri"
+                name="rolebansoi"
+              >
+                <InputNumber min={1} max={10} className="w-full" />
+              </Form.Item>
+              <Form.Item<FieldType>
+                labelCol={{ offset: 0, span: 7 }}
+                wrapperCol={{ offset: 0, span: 17 }}
+                label="Sói"
+                name="rolebansoi"
+              >
+                <InputNumber min={1} max={10} className="w-full" />
+              </Form.Item>
+              <Form.Item<FieldType>
+                labelCol={{ offset: 0, span: 7 }}
+                wrapperCol={{ offset: 0, span: 17 }}
+                label="Bán Sói"
+                name="rolebansoi"
+              >
+                <InputNumber min={1} max={10} className="w-full" />
+              </Form.Item>
+              <Form.Item<FieldType>
+                labelCol={{ offset: 0, span: 7 }}
+                wrapperCol={{ offset: 0, span: 17 }}
+                label="Phù Thủy"
+                name="rolebansoi"
+              >
+                <InputNumber min={1} max={10} className="w-full" />
+              </Form.Item>
+              <Form.Item<FieldType>
+                labelCol={{ offset: 0, span: 7 }}
+                wrapperCol={{ offset: 0, span: 17 }}
+                label="Bảo Vệ"
+                name="rolebansoi"
+              >
+                <InputNumber min={1} max={10} className="w-full" />
+              </Form.Item>
+              <Form.Item<FieldType>
+                labelCol={{ offset: 0, span: 7 }}
+                wrapperCol={{ offset: 0, span: 17 }}
+                label="Dân Làng"
+                name="rolebansoi"
+              >
+                <InputNumber min={1} max={10} className="w-full" />
+              </Form.Item>
+            </div>
+            <Form.Item<FieldType>
+              wrapperCol={{ offset: 0, span: 16 }}
+              labelCol={{ offset: 0, span: 8 }}
+              label="Số Lượng Các Vai Trò"
+              name="statusrole"
+            >
+            <Radio.Group onChange={onChange} value={onOffRole}>
+              <Radio value={1}>On</Radio>
+              <Radio value={0}>OFF</Radio>
+            </Radio.Group>
+            </Form.Item>
+            <Form.Item wrapperCol={{ offset: 0, span: 24 }}>
+              <div className="text-center">
+                <button className="bg-blue-600 text-white px-4 py-2 rounded">
+                  Lưu Cài Đặt
+                </button>
+              </div>
+            </Form.Item>
+          </Form>
         </Modal>
+
         <Modal
           title="Xoá Người Chơi"
           open={openPopupRemovePlayer}
@@ -317,7 +475,7 @@ const RoomClient = ({ params }: Props) => {
         <div className="absolute top-0 left-0 bg-hero-standard w-full h-full bg-filter"></div>
         <div className="relative max-w-2xl mx-auto w-full flex flex-col">
           <div className="relative text-center px-2 py-1 border">
-            [ {room && room.id} ] [ {room && room.name} ]
+            [ {room && room.name} ] [ {room && room.type} ]
           </div>
           <div className="grid grid-cols-4 items-start gap-1 mt-2 mb-auto">
             {filteredPlayerxroom.map((playerRoom, index) => (
