@@ -2,13 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { ref, remove, get, update, onValue } from "firebase/database";
-import { database } from "../../../lib/firebase/config";
-import { useRouter } from "next/navigation";
-
-import { Form, InputNumber, Modal, Input, Radio, Space, message } from "antd";
-import type { InputNumberProps, RadioChangeEvent, FormProps } from 'antd';
-
-import { LeftOutlined, SettingOutlined } from "@ant-design/icons";
+import { database } from "../../../../firebase/config";
+import { useRouter, useParams } from "next/navigation";
 import Image from "next/image";
 
 type Props = {
@@ -40,12 +35,12 @@ type FieldType = {
 };
 
 
-const RoomClient = ({ params }: Props) => {
-  const id = params.id;
+export default function RoomClient({ params }: Props) {
+  const id = useParams().id;
+  const router = useRouter();
   const [room, setRoom] = useState<any>(null);
   const [playerxroom, setPlayerxroom] = useState<PlayerRoom[]>([]);
   const [players, setPlayers] = useState<{ [key: string]: any }>({});
-  const router = useRouter();
   const [idAdmin, setIdAdmin] = useState<string | null>(null);
   const [idPlayer, setIdPlayer] = useState<string | null>(null);
   const [idPlayerRoom, setIdPlayerRoom] = useState<string | null>(null);
@@ -55,44 +50,36 @@ const RoomClient = ({ params }: Props) => {
   const [playerToRemove, setPlayerToRemove] = useState<string | null>(null);
   const [openSetting, setOpenSetting] = useState<boolean>(false);
   const [numberSetting, setNumberSetting] = useState<any>('');
-  const [messageApi, contextHolder] = message.useMessage();
   const [nameRoom, setNameRoom] = useState<string>('');
   const [onOffRole, setOnOffRole] = useState(1);
 
+  const [time, setTime] = useState(5);
+  const [timePlay, setTimePlay] = useState(false);
 
-  const onFinish: FormProps<FieldType>['onFinish'] = (values) => {
-    console.log('Success:', values);
+
+  useEffect(() => {
+    let timer: any;
+    if (timePlay && time > 0) {
+      timer = setInterval(() => {
+        setTime((prevTime) => prevTime - 1);
+      }, 1000);
+    } else if (time === 0) {
+      setTimePlay(false);
+    }
+
+    return () => clearInterval(timer);
+  }, [timePlay, time]);
+
+  const formatTime = (seconds: any) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
   };
 
-  const onFinishFailed: FormProps<FieldType>['onFinishFailed'] = (errorInfo) => {
-    console.log('Failed:', errorInfo);
-  };
 
-  const onChangeInputNumber: InputNumberProps['onChange'] = (value) => {
-    setNumberSetting(value)
-  };
-
-  const onChange = (e: RadioChangeEvent) => {
-    console.log('radio checked', e.target.value);
-    setOnOffRole(e.target.value);
-  };
-
-  const key = 'updatable'
   const openMessage = () => {
-    messageApi.open({
-      key,
-      type: 'loading',
-      content: 'loading...',
-    });
-
-    setTimeout(() => {
-      messageApi.open({
-        key,
-        type: 'success',
-        content: 'Game Start',
-        duration: 2,
-      });
-    }, 1000);
+    setTime(5)
+    setTimePlay(true)
   };
 
   const handleOk = () => {
@@ -253,7 +240,7 @@ const RoomClient = ({ params }: Props) => {
         )}
         <Image
           className="absolute bottom-0 left-1/2 -translate-x-1/2 max-w-[75%]"
-          src="/assets/avatar-03.png"
+          src="/images/avatar-03.png"
           width={500}
           height={500}
           alt="Picture of the author"
@@ -264,7 +251,6 @@ const RoomClient = ({ params }: Props) => {
 
   return (
     <>
-      {contextHolder}
       <div className="bg-transparent absolute top-0 left-0 w-full text-white z-10">
         <div className="flex justify-between gap-2 max-w-2xl  min-h-[60px] mx-auto py-3 px-2">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
@@ -274,6 +260,7 @@ const RoomClient = ({ params }: Props) => {
             <button
               className="px-2"
               onClick={() => {
+                router.push('/')
                 if (idAdmin) {
                   setOpen(true);
                 } if (idPlayer) {
@@ -281,21 +268,39 @@ const RoomClient = ({ params }: Props) => {
                 }
               }}
             >
-              <LeftOutlined />
               <span>Back</span>
             </button>
-            <button
-              className="p-2"
-              title="Setting"
-              onClick={() => { setOpenSetting(true) }}
-            >
-              <SettingOutlined />
-            </button>
+            {!timePlay ? (
+              <button
+                className="p-2"
+                title="Setting"
+                onClick={() => { setOpenSetting(true) }}
+              >
+                setting
+              </button>
+            ) :
+              idAdmin ? (
+                <button
+                  className="p-2"
+                  title="Chuyển Đổi"
+                >
+                  [Chuyển Đổi]
+                </button>
+              ) : (
+
+                <button
+                  className="p-2"
+                  title="Xem Vai Trò"
+                >
+                  [Xem Vai Trò]
+                </button>
+              )
+            }
           </>
         </div>
       </div>
       <div>
-        <Modal title="Xoá Phòng" open={open} onOk={handleOk} onCancel={() => { setOpen(false) }} >
+        {/* <Modal title="Xoá Phòng" open={open} onOk={handleOk} onCancel={() => { setOpen(false) }} >
           <p>Bạn thật sự muốn xoá phòng chơi này?</p>
         </Modal>
         <Modal
@@ -444,10 +449,10 @@ const RoomClient = ({ params }: Props) => {
               label="Số Lượng Các Vai Trò"
               name="statusrole"
             >
-            <Radio.Group onChange={onChange} value={onOffRole}>
-              <Radio value={1}>On</Radio>
-              <Radio value={0}>OFF</Radio>
-            </Radio.Group>
+              <Radio.Group onChange={onChange} value={onOffRole}>
+                <Radio value={1}>On</Radio>
+                <Radio value={0}>OFF</Radio>
+              </Radio.Group>
             </Form.Item>
             <Form.Item wrapperCol={{ offset: 0, span: 24 }}>
               <div className="text-center">
@@ -469,13 +474,23 @@ const RoomClient = ({ params }: Props) => {
           }}
         >
           <p>Bạn muốn xoá người chơi này khỏi phòng?</p>
-        </Modal>
+        </Modal> */}
       </div>
       <div className="bg-slate-900 bg-hero-standard  text-white min-h-screen pt-16 pb-2 px-2 flex">
         <div className="absolute top-0 left-0 bg-hero-standard w-full h-full bg-filter"></div>
         <div className="relative max-w-2xl mx-auto w-full flex flex-col">
-          <div className="relative text-center px-2 py-1 border">
-            [ {room && room.name} ] [ {room && room.type} ]
+          <div className="px-2 py-1 border">
+            {!timePlay ? (
+              <div className="relative text-center">
+                [ {room && room.name} ] [ {room && room.type} ]
+              </div>
+
+            ) : (
+              <div className="pl-10">
+                {formatTime(time)}
+              </div>
+            )}
+
           </div>
           <div className="grid grid-cols-4 items-start gap-1 mt-2 mb-auto">
             {filteredPlayerxroom.map((playerRoom, index) => (
@@ -531,4 +546,4 @@ const RoomClient = ({ params }: Props) => {
   );
 };
 
-export default RoomClient;
+// export default RoomClient;
