@@ -1,10 +1,8 @@
-'use client'
 import { push, get, ref, set, update, onValue } from "firebase/database";
 import { useEffect, useState } from "react";
 import { database } from "../../firebase/config";
 import { useRouter } from "next/navigation";
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
-
 
 type Rooms = {
   id: string;
@@ -15,11 +13,12 @@ type Rooms = {
 const Rooms = () => {
 
   const [rooms, setRooms] = useState<Rooms[]>([])
-  const [idPlayer, setIdPlayer] = useState<any>(null)
+  const [idPlayer, setIdPlayer] = useState<string | null>(null)
   const [namePlayer, setNamePlayer] = useState<string | null>('')
   const router = useRouter()
 
   useEffect(() => {
+    setIdPlayer(sessionStorage.getItem('idPlayerStorage'))
     const usesRef = ref(database, 'rooms')
     const showRoom = onValue(usesRef, async (snapshot) => {
       if (snapshot.exists()) {
@@ -34,14 +33,12 @@ const Rooms = () => {
     })
     return () => {
       showRoom();
-      setIdPlayer(sessionStorage.getItem('idPlayerStorage'))
     }
   }, [])
 
   useEffect(() => {
     const usesRefPlayer = ref(database, `players/${idPlayer}/name`)
     const showNamePlayer = onValue(usesRefPlayer, async (snapshot) => {
-        
       if (snapshot.exists()) {
         setNamePlayer(snapshot.val())
       }
@@ -56,6 +53,8 @@ const Rooms = () => {
 
   const handleJoinRoom = async (roomId: string) => {
     if (!idPlayer) return;
+    sessionStorage.setItem("idRoom", roomId);
+
     const playerRoomRef = ref(database, 'player-x-room');
     const playerRoomSnapshot = await get(playerRoomRef);
     if (playerRoomSnapshot.exists()) {

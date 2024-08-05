@@ -30,7 +30,7 @@ export default function FormCreatePlayer() {
   return (
     <>
       <h2 className="text-xl font-medium text-center border-b border-dashed py-4 mb-4 mt-10">ĐĂNG NHẬP</h2>
-      <div className="border-b border-dashed py-4 flex flex-col gap-4">
+      <div className="border-b border-dashed pb-4 flex flex-col gap-4">
         <div className="group-input">
           <input
             type="text"

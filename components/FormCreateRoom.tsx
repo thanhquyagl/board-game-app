@@ -76,7 +76,7 @@ export default function FormCreateRoom() {
         </Alert>
       </Snackbar>
       <h2 className="text-xl font-medium text-center border-b border-dashed py-4 mb-4">TẠO PHÒNG</h2>
-      <div className="border-b border-dashed py-4 flex flex-col gap-4">
+      <div className="border-b border-dashed pb-4 flex flex-col gap-4">
         <label className="block">Tên Phòng:</label>
         <div className="group-input">
           <input

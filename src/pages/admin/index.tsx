@@ -27,7 +27,6 @@ export default function Admin() {
   const [idPlayer, setIdPlayer] = useState<string | null>(null);
   const [players, setPlayers] = useState<{ [key: string]: any }>({});
   const [playerxroom, setPlayerxroom] = useState<PlayerRoom[]>([]);
-  const [idPlayerRoom, setIdPlayerRoom] = useState<string | null>(null);
   const [playerToRemove, setPlayerToRemove] = useState<string | null>(null);
 
   const [openModal, setOpenModal] = useState(false);
@@ -38,7 +37,6 @@ export default function Admin() {
   useEffect(() => {
     setIdAdmin(sessionStorage.getItem('idAdminStorage'));
     setId(sessionStorage.getItem('idAdminStorage'));
-    console.log(id);
 
     const roomRef = ref(database, `rooms/${id}`);
     const unsubscribeRoom = onValue(roomRef, (snapshot) => {
@@ -75,10 +73,6 @@ export default function Admin() {
         const playerData = playerResults.reduce((acc, curr) => ({ ...acc, ...curr }), {});
         setPlayers(playerData);
 
-        const currentPlayerRoom = playerRoomsData.find((pr: any) => pr.id_player === idPlayer && pr.id_room === id);
-        if (currentPlayerRoom) {
-          setIdPlayerRoom(currentPlayerRoom.id);
-        }
       } else {
         console.log('Không tìm thấy dữ liệu');
       }
@@ -91,19 +85,6 @@ export default function Admin() {
       unsubscribePlayerRoom();
     };
   }, [id, idPlayer, router]);
-
-  useEffect(() => {
-    if (idPlayerRoom) {
-      const playerRoomRef = ref(database, `player-x-room/${idPlayerRoom}`);
-      const unsubscribePlayerRoom = onValue(playerRoomRef, (snapshot) => {
-        const playerRoomData = snapshot.val();
-        if (playerRoomData && playerRoomData.rule === false) {
-          router.push('/room/');
-        }
-      });
-      return () => unsubscribePlayerRoom();
-    }
-  }, [idPlayerRoom, router]);
 
 
   const handleDeleteRoom = async () => {
@@ -138,7 +119,12 @@ export default function Admin() {
   const handleDeletePlayer = async (idPlayerRoom: string) => {
     try {
       const playerRoomRef = ref(database, `player-x-room/${idPlayerRoom}`);
+      console.log(idPlayerRoom);
+      
+      remove(ref(database, `player-x-room/${idPlayerRoom}`));
+
       await update(playerRoomRef, { rule: false });
+      handleClosePlayer()
       setTimeout(() => {
         remove(ref(database, `player-x-room/${idPlayerRoom}`));
       }, 1000)
@@ -184,7 +170,7 @@ export default function Admin() {
                       handleClose()
                     }}
                   >
-                    Canel
+                    Quay lại
                   </button>
                   <button
                     className="border rounded px-3 py-1 bg-red-700 border-red-700 shadow-sm"
@@ -192,7 +178,7 @@ export default function Admin() {
                       handleDeleteRoom()
                     }}
                   >
-                    Exit
+                    Tiếp trục
                   </button>
                 </div>
               </div>
@@ -226,43 +212,12 @@ export default function Admin() {
                 <button
                   className="absolute bottom-1 right-1 p-2 flex"
                   onClick={() => {
+                    setPlayerToRemove(playerRoom.id)
                     setOpenModalPlayer(true)
                   }}
                 >
                   <LinearScaleIcon sx={{ fontSize: '14px' }} />
                 </button>
-                <Modal
-                  open={openModalPlayer}
-                  onClose={handleClosePlayer}
-                  aria-labelledby="modal-modal-title"
-                  aria-describedby="modal-modal-description"
-                >
-                  <div
-                    className="text-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-5 border rounded max-w-full w-[600px] bg-gray-950 shadow-sm"
-                  >
-                    <p className="text-2xl font-bold">Xoá Người Chơi</p>
-                    <p className="my-2">Bạn muốn xoá người ra <u>{roomDetail && roomDetail.name} </u> của bạn?</p>
-                    <div className="flex justify-end gap-3">
-                      <button
-                        className="border rounded px-3 py-1"
-                        onClick={() => {
-                          handleClosePlayer()
-                        }}
-                      >
-                        Canel
-                      </button>
-                      <button
-                        className="border rounded px-3 py-1 bg-red-700 border-red-700 shadow-sm"
-                        onClick={() => {
-                          handleOkPopupPlayer()
-                          setPlayerToRemove(playerRoom.id)
-                        }}
-                      >
-                        OK
-                      </button>
-                    </div>
-                  </div>
-                </Modal>
                 <Image
                   className="absolute bottom-0 left-1/2 -translate-x-1/2 max-w-[75%]"
                   src="/assets/avatar-03.png"
@@ -273,8 +228,42 @@ export default function Admin() {
               </div>
             ))}
           </div>
+          <>
+            <Modal
+              open={openModalPlayer}
+              onClose={handleClosePlayer}
+              aria-labelledby="modal-modal-title"
+              aria-describedby="modal-modal-description"
+            >
+              <div
+                className="text-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-5 border rounded max-w-full w-[600px] bg-gray-950 shadow-sm"
+              >
+                <p className="text-2xl font-bold">Xoá Người Chơi</p>
+                <p className="my-2">Bạn muốn xoá người chơi ra <u>{roomDetail && roomDetail.name} </u> của bạn?</p>
+                <div className="flex justify-end gap-3">
+                  <button
+                    className="border rounded px-3 py-1"
+                    onClick={() => {
+                      handleClosePlayer()
+                    }}
+                  >
+                    Quay Lại
+                  </button>
+                  <button
+                    className="border rounded px-3 py-1 bg-red-700 border-red-700 shadow-sm"
+                    onClick={() => {
+                      handleOkPopupPlayer()
+                      setPlayerToRemove(playerToRemove)
+                    }}
+                  >
+                    Tiếp trục
+                  </button>
+                </div>
+              </div>
+            </Modal>
+          </>
           <div className="text-center">
-            <div className="c-btn__main mt-3">
+            <div className="c-btn__main">
               <button
                 className="flex-none bg-transparent text-white px-6 py-1 font-semibold hover:text-slate-900"
                 disabled={roomDetail ? (filteredPlayerxroom.length === roomDetail.limit ? false : true) : true}
