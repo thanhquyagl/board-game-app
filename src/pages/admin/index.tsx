@@ -23,8 +23,6 @@ export default function Admin() {
 
   const [id, setId] = useState<string | null>('');
   const [roomDetail, serRoomDetail] = useState<any>(null);
-  const [idAdmin, setIdAdmin] = useState<string | null>(null);
-  const [idPlayer, setIdPlayer] = useState<string | null>(null);
   const [players, setPlayers] = useState<{ [key: string]: any }>({});
   const [playerxroom, setPlayerxroom] = useState<PlayerRoom[]>([]);
   const [playerToRemove, setPlayerToRemove] = useState<string | null>(null);
@@ -36,7 +34,6 @@ export default function Admin() {
 
   useEffect(() => {
     const idAdminStorage = sessionStorage.getItem('idAdminStorage');
-    setIdAdmin(idAdminStorage);
     setId(idAdminStorage);
   }, []);
 
@@ -76,8 +73,6 @@ export default function Admin() {
         const playerData = playerResults.reduce((acc, curr) => ({ ...acc, ...curr }), {});
         setPlayers(playerData);
 
-      } else {
-        console.error('Không tìm thấy dữ liệu');
       }
     }, (error) => {
       console.error('Lỗi lấy dữ liệu player-x-room: ', error);
@@ -187,7 +182,7 @@ export default function Admin() {
               className="p-2"
               title="Setting"
               onClick={() => {
-                router.push('/admin/setting')
+                router.push(`/admin/setting?idRoom=${id}`)
               }}
             >
               [ Setting ]

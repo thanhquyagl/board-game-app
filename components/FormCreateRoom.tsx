@@ -29,6 +29,19 @@ export default function FormCreateRoom() {
     }
     setOpenSnackbar(false);
   };
+
+  const roles = {
+    fool: 1,
+    hunter: 1,
+    seer: 1,
+    werewolf: 1,
+    halfWerewolf: 1,
+    witch: 1,
+    guardian: 1,
+    villager: 1,
+    revealedOnDeath: false,
+  };
+  
   const handleAddRoom = () => {
     if (nameRoom) {
       try {
@@ -37,6 +50,7 @@ export default function FormCreateRoom() {
         const newDataRef = push(usesRef);
         const roomId = newDataRef.key;
         const idAdmin = newDataRef.key as string;
+
         set(newDataRef, {
           id: roomId,
           name: nameRoom,
@@ -45,7 +59,9 @@ export default function FormCreateRoom() {
           limit: 2,
           type: typeRoom,
           pass: passRoom,
+          roles: roles
         });
+
         sessionStorage.setItem("idAdminStorage", idAdmin);
         setIdAdmin(idAdmin)
         setNameRoom('');
