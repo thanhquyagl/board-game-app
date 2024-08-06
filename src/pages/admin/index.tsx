@@ -35,20 +35,23 @@ export default function Admin() {
   const handleClosePlayer = () => setOpenModalPlayer(false);
 
   useEffect(() => {
-    setIdAdmin(sessionStorage.getItem('idAdminStorage'));
-    setId(sessionStorage.getItem('idAdminStorage'));
+    const idAdminStorage = sessionStorage.getItem('idAdminStorage');
+    setIdAdmin(idAdminStorage);
+    setId(idAdminStorage);
+  }, []);
 
+  useEffect(() => {
+    if (!id) return;
     const roomRef = ref(database, `rooms/${id}`);
     const unsubscribeRoom = onValue(roomRef, (snapshot) => {
       if (snapshot.exists()) {
         serRoomDetail(snapshot.val());
       } else {
-        router.push('/room/');
+        router.push('/');
       }
     }, (error) => {
       console.log(error);
     });
-
 
     const playerRoomsRef = ref(database, 'player-x-room');
     const unsubscribePlayerRoom = onValue(playerRoomsRef, async (snapshot) => {
@@ -74,7 +77,7 @@ export default function Admin() {
         setPlayers(playerData);
 
       } else {
-        console.log('Không tìm thấy dữ liệu');
+        console.error('Không tìm thấy dữ liệu');
       }
     }, (error) => {
       console.error('Lỗi lấy dữ liệu player-x-room: ', error);
@@ -84,8 +87,7 @@ export default function Admin() {
       unsubscribeRoom();
       unsubscribePlayerRoom();
     };
-  }, [id, idPlayer, router]);
-
+  }, [id, router]);
 
   const handleDeleteRoom = async () => {
     try {
@@ -119,10 +121,7 @@ export default function Admin() {
   const handleDeletePlayer = async (idPlayerRoom: string) => {
     try {
       const playerRoomRef = ref(database, `player-x-room/${idPlayerRoom}`);
-      console.log(idPlayerRoom);
-      
       remove(ref(database, `player-x-room/${idPlayerRoom}`));
-
       await update(playerRoomRef, { rule: false });
       handleClosePlayer()
       setTimeout(() => {

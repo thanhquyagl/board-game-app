@@ -23,7 +23,6 @@ export default function Player() {
 
   const [id, setId] = useState<string | null>('');
   const [roomDetail, serRoomDetail] = useState<any>(null);
-  const [idAdmin, setIdAdmin] = useState<string | null>(null);
   const [idPlayer, setIdPlayer] = useState<string | null>(null);
   const [players, setPlayers] = useState<{ [key: string]: any }>({});
   const [playerxroom, setPlayerxroom] = useState<PlayerRoom[]>([]);
@@ -33,7 +32,7 @@ export default function Player() {
   const handleClose = () => setOpenModal(false);
 
   useEffect(() => {
-    setIdAdmin(sessionStorage.getItem('idRoom'));
+    setIdPlayer(sessionStorage.getItem('idPlayerStorage'));
     setId(sessionStorage.getItem('idRoom'));
 
     const roomRef = ref(database, `rooms/${id}`);
@@ -70,7 +69,7 @@ export default function Player() {
         const playerData = playerResults.reduce((acc, curr) => ({ ...acc, ...curr }), {});
         setPlayers(playerData);
 
-        const currentPlayerRoom = playerRoomsData.find((pr: any) => pr.id_player === idPlayer && pr.id_room === id);
+        const currentPlayerRoom = playerRoomsData.find((pr: any) => pr.id_player === idPlayer && pr.id_room === id && pr.rule === true);
         if (currentPlayerRoom) {
           setIdPlayerRoom(currentPlayerRoom.id);
         }
@@ -99,10 +98,10 @@ export default function Player() {
       return () => unsubscribePlayerRoom();
     }
   }, [idPlayerRoom, router]);
-  
+
   const handleMoveRoom = async () => {
     console.log(idPlayerRoom);
-    
+
     try {
       if (idPlayerRoom) {
         const playerRoomRef = ref(database, `player-x-room/${idPlayerRoom}`);

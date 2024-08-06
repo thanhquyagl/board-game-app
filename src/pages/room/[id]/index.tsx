@@ -105,7 +105,7 @@ export default function RoomClient({ params }: Props) {
         setRoom(snapshot.val());
         setNameRoom(snapshot.val().name)
       } else {
-        router.push('/room/');
+        router.push('/rooms/');
       }
     }, (error) => {
       console.log(error);
@@ -157,7 +157,7 @@ export default function RoomClient({ params }: Props) {
       const unsubscribePlayerRoom = onValue(playerRoomRef, (snapshot) => {
         const playerRoomData = snapshot.val();
         if (playerRoomData && playerRoomData.rule === false) {
-          router.push('/room/');
+          router.push('/rooms/');
         }
       });
       return () => unsubscribePlayerRoom();
@@ -206,7 +206,7 @@ export default function RoomClient({ params }: Props) {
         const playerRoomRef = ref(database, `player-x-room/${idPlayerRoom}`);
         await update(playerRoomRef, { del_flg: 1 });
         setOpenPopupRemovePlayer(false);
-        router.push('/room/');
+        router.push('/rooms/');
       }
     } catch (error) {
       alert('không thể thoát người chơi, vui lòng thử lại');
