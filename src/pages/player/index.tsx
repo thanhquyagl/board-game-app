@@ -169,7 +169,7 @@ export default function Player() {
               className="p-2"
               title="Setting"
               onClick={() => {
-                router.push('/admin/setting')
+                router.push(`/player/setting?idRoom=${id}`)
               }}
             >
               [ Setting ]

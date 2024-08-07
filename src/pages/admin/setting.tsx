@@ -18,6 +18,17 @@ import {
 import { ref, update, onValue } from "firebase/database";
 import { database } from "../../../firebase/config";
 
+const roleTranslations: { [key: string]: string } = {
+  fool: 'Kẻ Ngốc',
+  hunter: 'Thợ Săn',
+  seer: 'Tiên Tri',
+  werewolf: 'Sói',
+  halfWerewolf: 'Bán Sói',
+  witch: 'Phù Thủy',
+  guardian: 'Bảo Vệ',
+  villager: 'Dân Làng',
+};
+
 export default function Setting() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -165,6 +176,7 @@ export default function Setting() {
                   value={roomDetail?.limit || ''}
                   onChange={handleInputChange}
                   name="limit"
+                  min={1}
                 />
               </div>
             </div>
@@ -176,7 +188,7 @@ export default function Setting() {
           {['fool', 'hunter', 'seer', 'werewolf', 'halfWerewolf', 'witch', 'guardian', 'villager'].map(role => (
             <div className="py-1 px-4" key={role}>
               <div className="flex items-center gap-2">
-                <p className="min-w-[100px]">{role}: </p>
+                <p className="min-w-[100px]">{roleTranslations[role]}: </p>
                 <div className="group-input">
                   <input
                     type="number"
@@ -192,9 +204,9 @@ export default function Setting() {
                       }));
                     }}
                     name={role}
+                    min={1}
                   />
                 </div>
-                <p>{role.charAt(0).toUpperCase() + role.slice(1)}</p>
               </div>
             </div>
           ))}
