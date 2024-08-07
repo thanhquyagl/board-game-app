@@ -66,14 +66,16 @@ export default function Setting() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+    const parsedValue = parseInt(value);
     serRoomDetail((prevDetail: any) => ({
       ...prevDetail,
-      [name]: value,
+      [name]: parsedValue,
     }));
   };
 
   const handleRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+    const parsedValue = parseInt(value);
     serRoomDetail((prevDetail: any) => ({
       ...prevDetail,
       roles: {

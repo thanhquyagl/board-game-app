@@ -260,7 +260,8 @@ export default function Admin() {
             <div className="c-btn__main">
               <button
                 className="flex-none bg-transparent text-white px-6 py-1 font-semibold hover:text-slate-900"
-                disabled={roomDetail ? (filteredPlayerxroom.length === roomDetail.limit ? false : true) : true}
+                disabled={roomDetail ? (filteredPlayerxroom.length === roomDetail.limit ? false : true) : false}
+                onClick={() => { router.push('/admin/game') }}
               >
                 <span className="relative">Bắt Đầu Game</span>
               </button>
