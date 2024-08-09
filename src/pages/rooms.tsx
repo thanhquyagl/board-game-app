@@ -7,6 +7,7 @@ import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 type Rooms = {
   id: string;
   name: string;
+  length: number;
   [key: string]: any;
 };
 
@@ -51,7 +52,7 @@ const Rooms = () => {
     }
   }, [idPlayer])
 
-  const handleJoinRoom = async (roomId: string) => {
+  const handleJoinRoom = async (roomId: string, roomLength: number) => {
     if (!idPlayer) return;
     sessionStorage.setItem("idRoom", roomId);
 
@@ -69,6 +70,12 @@ const Rooms = () => {
         router.push(`/player/`);
         return;
       }
+    }
+
+    try {
+      update(ref(database, `rooms/${roomId}`), {length: roomLength + 1});
+    } catch (error) {
+      console.log('update room length' + error);
     }
 
     const newPlayerRoomRef = push(ref(database, 'player-x-room'));
@@ -116,11 +123,15 @@ const Rooms = () => {
                 <button
                   className="w-full p-2 flex justify-between"
                   onClick={() => {
-                    handleJoinRoom(room.id)
+                    if(room.length === room.limit) {
+                      alert('Room Full')
+                    } else {
+                      handleJoinRoom(room.id, room.length)
+                    }
                   }}
                 >
                   <span>Phòng {room.name}</span>
-                  <span>4/{room.limit}</span>
+                  <span>{room.length}/{room.limit}</span>
                 </button>
               </div>
             ))

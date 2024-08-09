@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { ref, remove, get, update, onValue } from "firebase/database";
 import { database } from "../../../firebase/config";
 import { useRouter } from "next/navigation";
@@ -122,6 +122,7 @@ export default function Admin() {
       setTimeout(() => {
         remove(ref(database, `player-x-room/${idPlayerRoom}`));
       }, 1000)
+      handleLengthRoom();
     } catch (error) {
       alert('không thể kích người chơi, vui lòng thử lại');
     }
@@ -142,6 +143,22 @@ export default function Admin() {
   }
 
   const filteredPlayerxroom = playerxroom.filter(playerRoom => playerRoom.id_room === id && playerRoom.rule === true);
+
+
+  const handleLengthRoom = async () => {
+    const updatedRoomDetail = {
+      ...roomDetail,
+      length: filteredPlayerxroom.length - 1,
+    };
+
+    try {
+      update(ref(database, `rooms/${id}`), updatedRoomDetail);
+      setRoomDetail(updatedRoomDetail)
+
+    } catch (error) {
+      console.log('Error update room length');
+    }
+  }
 
   return (
     <>
