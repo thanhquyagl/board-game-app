@@ -59,7 +59,8 @@ export default function FormCreateRoom() {
           limit: 2,
           type: typeRoom,
           pass: passRoom,
-          roles: roles
+          roles: roles,
+          start: false
         });
 
         sessionStorage.setItem("idAdminStorage", idAdmin);

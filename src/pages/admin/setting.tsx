@@ -35,7 +35,7 @@ export default function Setting() {
   const idRoom = searchParams.get('idRoom');
 
   const [statusPass, setStatusPass] = useState<boolean>(false);
-  const [roomDetail, serRoomDetail] = useState<any>(null);
+  const [roomDetail, setRoomDetail] = useState<any>(null);
   const [opensnackbar, setOpenSnackbar] = useState(false);
 
   const handleClose = (
@@ -53,7 +53,7 @@ export default function Setting() {
     const roomRef = ref(database, `rooms/${idRoom}`);
     const unsubscribeRoom = onValue(roomRef, (snapshot) => {
       if (snapshot.exists()) {
-        serRoomDetail(snapshot.val());
+        setRoomDetail(snapshot.val());
       }
     }, (error) => {
       console.log(error);
@@ -67,7 +67,16 @@ export default function Setting() {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     const parsedValue = parseInt(value);
-    serRoomDetail((prevDetail: any) => ({
+    setRoomDetail((prevDetail: any) => ({
+      ...prevDetail,
+      [name]: value,
+    }));
+  };
+
+  const handleInputChangeNumber = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    const parsedValue = parseInt(value);
+    setRoomDetail((prevDetail: any) => ({
       ...prevDetail,
       [name]: parsedValue,
     }));
@@ -75,8 +84,7 @@ export default function Setting() {
 
   const handleRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    const parsedValue = parseInt(value);
-    serRoomDetail((prevDetail: any) => ({
+    setRoomDetail((prevDetail: any) => ({
       ...prevDetail,
       roles: {
         ...prevDetail.roles,
@@ -176,7 +184,7 @@ export default function Setting() {
                   type="number"
                   className="bg-transparent border-b px-2 py-1 relative focus:outline-none w-full"
                   value={roomDetail?.limit || ''}
-                  onChange={handleInputChange}
+                  onChange={handleInputChangeNumber}
                   name="limit"
                   min={1}
                 />
@@ -197,7 +205,7 @@ export default function Setting() {
                     className="bg-transparent border-b px-2 py-1 relative focus:outline-none w-full"
                     value={roomDetail?.roles?.[role] || ''}
                     onChange={(e) => {
-                      serRoomDetail((prevDetail: any) => ({
+                      setRoomDetail((prevDetail: any) => ({
                         ...prevDetail,
                         roles: {
                           ...prevDetail.roles,

@@ -22,7 +22,7 @@ export default function Admin() {
   const router = useRouter();
 
   const [id, setId] = useState<string | null>('');
-  const [roomDetail, serRoomDetail] = useState<any>(null);
+  const [roomDetail, setRoomDetail] = useState<any>(null);
   const [players, setPlayers] = useState<{ [key: string]: any }>({});
   const [playerxroom, setPlayerxroom] = useState<PlayerRoom[]>([]);
   const [playerToRemove, setPlayerToRemove] = useState<string | null>(null);
@@ -42,7 +42,7 @@ export default function Admin() {
     const roomRef = ref(database, `rooms/${id}`);
     const unsubscribeRoom = onValue(roomRef, (snapshot) => {
       if (snapshot.exists()) {
-        serRoomDetail(snapshot.val());
+        setRoomDetail(snapshot.val());
       } else {
         router.push('/');
       }
@@ -126,6 +126,20 @@ export default function Admin() {
       alert('không thể kích người chơi, vui lòng thử lại');
     }
   };
+
+  const handleStartGame = async () => {
+    const updatedRoomDetail = {
+      ...roomDetail,
+      start: true,
+    };
+    try {
+      await update(ref(database, `rooms/${id}`), updatedRoomDetail);
+      setRoomDetail(updatedRoomDetail)
+      router.push('/admin/game')
+    } catch (error) {
+      console.error('Error starting game: ', error);
+    }
+  }
 
   const filteredPlayerxroom = playerxroom.filter(playerRoom => playerRoom.id_room === id && playerRoom.rule === true);
 
@@ -261,7 +275,7 @@ export default function Admin() {
               <button
                 className="flex-none bg-transparent text-white px-6 py-1 font-semibold hover:text-slate-900"
                 disabled={roomDetail ? (filteredPlayerxroom.length === roomDetail.limit ? false : true) : false}
-                onClick={() => { router.push('/admin/game') }}
+                onClick={() => { handleStartGame() }}
               >
                 <span className="relative">Bắt Đầu Game</span>
               </button>

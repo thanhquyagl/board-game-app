@@ -8,7 +8,6 @@ import Image from "next/image";
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import Modal from '@mui/material/Modal';
 
-
 type PlayerRoom = {
   id: string;
   id_player: string;
@@ -72,15 +71,13 @@ function ChildModal() {
   );
 }
 
-
-
 export default function Admin() {
   const router = useRouter();
 
   const [id, setId] = useState<string | null>('');
   const [players, setPlayers] = useState<{ [key: string]: any }>({});
   const [playerxroom, setPlayerxroom] = useState<PlayerRoom[]>([]);
-  const [roomDetail, serRoomDetail] = useState<any>(null);
+  const [roomDetail, setRoomDetail] = useState<any>(null);
 
   const [openModal, setOpenModal] = useState(false);
   const [openModalAction, setOpenModalAction] = useState(false);
@@ -99,7 +96,7 @@ export default function Admin() {
     const roomRef = ref(database, `rooms/${id}`);
     const unsubscribeRoom = onValue(roomRef, (snapshot) => {
       if (snapshot.exists()) {
-        serRoomDetail(snapshot.val());
+        setRoomDetail(snapshot.val());
       } else {
         router.push('/');
       }
@@ -141,28 +138,20 @@ export default function Admin() {
     };
   }, [id, router]);
 
-  const handleDeleteRoom = async () => {
+
+  const handleStartGame = async () => {
+    const updatedRoomDetail = {
+      ...roomDetail,
+      start: false,
+    };
     try {
-      await remove(ref(database, `rooms/${id}`));
-      const playerRoomsRef = ref(database, 'player-x-room');
-      const playerRoomsSnapshot = await get(playerRoomsRef);
-      if (playerRoomsSnapshot.exists()) {
-        const playerRoomsData: any = Object.entries(playerRoomsSnapshot.val()).map(([id, data]) => ({
-          id,
-          ...data as object,
-        }));
-        playerRoomsData.forEach(async (playerRoom: any) => {
-          if (playerRoom.id_room === id) {
-            await remove(ref(database, `player-x-room/${playerRoom.id}`));
-          }
-        });
-      }
-      sessionStorage.removeItem('idAdminStorage');
-      router.push('/');
+      await update(ref(database, `rooms/${id}`), updatedRoomDetail);
+      setRoomDetail(updatedRoomDetail)
+      router.push('/admin/')
     } catch (error) {
-      console.error('Lỗi xoá room: ', error);
+      console.error('Error starting game: ', error);
     }
-  };
+  }
 
   const filteredPlayerxroom = playerxroom.filter(playerRoom => playerRoom.id_room === id && playerRoom.rule === true);
 
@@ -192,8 +181,11 @@ export default function Admin() {
               <div
                 className="text-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-5 border rounded max-w-full w-[600px] bg-gray-950 shadow-sm"
               >
-                <p className="text-xl font-bold">Thoát Phòng</p>
-                <p className="my-2">Bạn muốn thoát phòng? Phòng sẽ bị xoá khi bạn thoát ra!</p>
+                <p className="text-xl font-bold">Thoát Game</p>
+                <p className="my-2">
+                  Bạn muốn thoát game? <br/>
+                  Bạn sẽ quay về phòng chơi!
+                </p>
                 <div className="flex justify-end gap-3">
                   <button
                     className="border rounded px-3 py-1"
@@ -206,7 +198,7 @@ export default function Admin() {
                   <button
                     className="border rounded px-3 py-1 bg-red-700 border-red-700 shadow-sm"
                     onClick={() => {
-                      handleDeleteRoom()
+                      handleStartGame()
                     }}
                   >
                     Tiếp trục

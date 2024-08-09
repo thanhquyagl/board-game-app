@@ -6,7 +6,6 @@ import { database } from "../../../firebase/config";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
-import LinearScaleIcon from '@mui/icons-material/LinearScale';
 import Modal from '@mui/material/Modal';
 
 
@@ -99,9 +98,13 @@ export default function Player() {
     }
   }, [idPlayerRoom, router]);
 
-  const handleMoveRoom = async () => {
-    console.log(idPlayerRoom);
+  useEffect(()=>{
+    if(roomDetail?.start) {
+      router.push('/player/game')
+    }
+  })
 
+  const handleMoveRoom = async () => {
     try {
       if (idPlayerRoom) {
         const playerRoomRef = ref(database, `player-x-room/${idPlayerRoom}`);
