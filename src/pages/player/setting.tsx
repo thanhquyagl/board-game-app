@@ -1,11 +1,15 @@
 'use client'
 
 import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
-import VisibilityIcon from '@mui/icons-material/Visibility';
+import {
+  Snackbar,
+  SnackbarCloseReason,
+  Alert,
+} from '@mui/material'
 
-import { ref, onValue } from "firebase/database";
+import { ref, onValue, update } from "firebase/database";
 import { database } from "../../../firebase/config";
 
 const roleTranslations: { [key: string]: string } = {
@@ -20,12 +24,38 @@ const roleTranslations: { [key: string]: string } = {
 };
 
 export default function Setting() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const idRoom = searchParams.get('idRoom');
-
-  const [statusPass, setStatusPass] = useState<boolean>(false);
+  const [idPlayer, setIdPlayer] = useState<string | null>(null);
   const [roomDetail, setRoomDetail] = useState<any>(null);
+  const [player, setPlayer] = useState<any>([])
+  const [opensnackbar, setOpenSnackbar] = useState(false);
+
+  const handleClose = (
+    event: React.SyntheticEvent | Event,
+    reason?: SnackbarCloseReason,
+  ) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpenSnackbar(false);
+  };
+
+  useEffect(() => {
+    setIdPlayer(sessionStorage.getItem('idPlayerStorage'))
+    const usesRefPlayer = ref(database, `players/${idPlayer}/`)
+    const showNamePlayer = onValue(usesRefPlayer, async (snapshot) => {
+      if (snapshot.exists()) {
+        setPlayer(snapshot.val());
+      }
+      else {
+        console.log('error');
+      }
+    })
+    return () => {
+      showNamePlayer();
+    }
+  }, [idPlayer])
 
   useEffect(() => {
     if (!idRoom) return;
@@ -44,8 +74,42 @@ export default function Setting() {
     };
   }, [idRoom]);
 
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setPlayer((prevDetail: any) => ({
+      ...prevDetail,
+      [name]: value,
+    }));
+  }
+
+  const handleSaveSettings = async () => {
+    try {
+      await update(ref(database, `players/${idPlayer}`), player);
+      setOpenSnackbar(true);
+    } catch (error) {
+      console.error('Error updating settings: ', error);
+      alert('Failed to update settings');
+    }
+  };
+
   return (
     <>
+      <Snackbar
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        open={opensnackbar}
+        autoHideDuration={1000}
+        onClose={handleClose}
+      >
+        <Alert
+          onClose={handleClose}
+          severity="success"
+          variant="filled"
+          sx={{ width: '100%' }}
+        >
+          Cập nhật Setting thành công!
+        </Alert>
+      </Snackbar>
       <div className="bg-transparent absolute top-0 left-0 w-full text-white z-10">
         <div className="flex justify-between gap-2 max-w-2xl min-h-[60px] mx-auto py-3 px-2">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
@@ -62,38 +126,54 @@ export default function Setting() {
         <div className="absolute top-0 left-0 bg-hero-standard w-full h-full bg-filter"></div>
         <div className="relative max-w-2xl mx-auto w-full flex flex-col">
           <div className="border-t border-dashed py-3 px-2">
-            <div className="flex items-center gap-2">
-              <p>Phòng: </p>
+            <div className="flex items-center gap-4">
+              <p>Tên Người Chơi: </p>
               <div className="group-input">
-                <p className="border-b min-w-[150px]">{roomDetail?.name}</p>
-              </div>
-            </div>
-          </div>
-          <div className="border-t border-dashed py-3 px-2">
-            <div className="flex items-center gap-2">
-              <p>Mật Khẩu: </p>
-              <div className="relative group-input">
                 <input
-                  type={statusPass ? "text" : "password"}
+                  type="text"
                   className="bg-transparent border-b px-2 py-1 relative focus:outline-none w-full"
-                  value={roomDetail?.pass || ''}
-                  name="pass"
-                  readOnly
+                  value={player?.name || ''}
+                  onChange={handleInputChange}
+                  name="name"
                 />
+              </div>
+              <div className="c-btn__main">
                 <button
-                  className="absolute top-1/2 -translate-y-1/2 right-3"
-                  onClick={() => setStatusPass(!statusPass)}
+                  className="flex-none bg-transparent text-white px-6 py-1 font-semibold hover:text-slate-900"
+                  onClick={handleSaveSettings}
                 >
-                  <VisibilityIcon fontSize="small" />
+                  <span className="relative">Lưu</span>
                 </button>
               </div>
             </div>
           </div>
           <div className="border-t border-dashed py-3 px-2">
             <div className="flex items-center gap-2">
+              <p>Phòng: </p>
+              <div className="group-input">
+                <p className="border-b min-w-[150px] text-center">{roomDetail?.name}</p>
+              </div>
+            </div>
+          </div>
+          {
+            roomDetail?.pass && (
+              <div className="border-t border-dashed py-3 px-2">
+                <div className="flex items-center gap-2">
+                  <p>Mật Khẩu: </p>
+                  <div className="relative group-input">
+                    <div className="min-w-[150px] text-center border-b">
+                      {roomDetail?.pass || '　'}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )
+          }
+          <div className="border-t border-dashed py-3 px-2">
+            <div className="flex items-center gap-2">
               <p>Số Lượng Người Chơi: </p>
               <div className="group-input">
-                <p className="border-b min-w-[150px]">{roomDetail?.limit}</p>
+                <p className="border-b min-w-[150px] text-center">{roomDetail?.limit}</p>
               </div>
             </div>
           </div>
@@ -105,13 +185,9 @@ export default function Setting() {
               <div className="flex items-center gap-2">
                 <p className="min-w-[100px]">{roleTranslations[role]}: </p>
                 <div className="group-input">
-                  <input
-                    type="number"
-                    className="bg-transparent border-b px-2 py-1 relative focus:outline-none w-full"
-                    value={roomDetail?.roles?.[role] || ''}
-                    name={role}
-                    readOnly
-                  />
+                  <div className="min-w-[150px] text-center border-b">
+                    {roomDetail?.roles?.[role] || ''}
+                  </div>
                 </div>
               </div>
             </div>

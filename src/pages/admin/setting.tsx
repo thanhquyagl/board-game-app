@@ -63,7 +63,6 @@ export default function Setting() {
     }
   }, [idRoom, router])
 
-
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     const parsedValue = parseInt(value);
@@ -214,7 +213,7 @@ export default function Setting() {
                       }));
                     }}
                     name={role}
-                    min={1}
+                    min={0}
                   />
                 </div>
               </div>
