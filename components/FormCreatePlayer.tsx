@@ -31,10 +31,10 @@ export default function FormCreatePlayer() {
     <>
       <h2 className="text-xl font-medium text-center border-b border-dashed py-4 mb-4 mt-10">ĐĂNG NHẬP</h2>
       <div className="border-b border-dashed pb-4 flex flex-col gap-4">
+        <label className="block">Nhập tên player:</label>
         <div className="group-input">
           <input
             type="text"
-            placeholder="Nhập tên player"
             className="bg-transparent border-b px-2 py-1 relative focus:outline-none w-full"
             value={newPlayer}
             onChange={(e) => setNewPlayer(e.target.value)}

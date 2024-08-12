@@ -65,7 +65,6 @@ export default function Setting() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    const parsedValue = parseInt(value);
     setRoomDetail((prevDetail: any) => ({
       ...prevDetail,
       [name]: value,

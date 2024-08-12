@@ -73,7 +73,7 @@ const Rooms = () => {
     }
 
     try {
-      update(ref(database, `rooms/${roomId}`), {length: roomLength + 1});
+      update(ref(database, `rooms/${roomId}`), { length: roomLength + 1 });
     } catch (error) {
       console.log('update room length' + error);
     }
@@ -123,7 +123,7 @@ const Rooms = () => {
                 <button
                   className="w-full p-2 flex justify-between"
                   onClick={() => {
-                    if(room.length === room.limit) {
+                    if (room.length === room.limit) {
                       alert('Room Full')
                     } else {
                       handleJoinRoom(room.id, room.length)

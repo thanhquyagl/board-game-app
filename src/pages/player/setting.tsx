@@ -150,9 +150,8 @@ export default function Setting() {
           <div className="border-t border-dashed py-3 px-2">
             <div className="flex items-center gap-2">
               <p>Phòng: </p>
-              <div className="group-input">
-                <p className="border-b min-w-[150px] text-center">{roomDetail?.name}</p>
-              </div>
+
+              <p className="border-b min-w-[150px] text-center">{roomDetail?.name}</p>
             </div>
           </div>
           {
@@ -160,10 +159,8 @@ export default function Setting() {
               <div className="border-t border-dashed py-3 px-2">
                 <div className="flex items-center gap-2">
                   <p>Mật Khẩu: </p>
-                  <div className="relative group-input">
-                    <div className="min-w-[150px] text-center border-b">
-                      {roomDetail?.pass || '　'}
-                    </div>
+                  <div className="min-w-[150px] text-center border-b">
+                    {roomDetail?.pass || '　'}
                   </div>
                 </div>
               </div>
@@ -172,9 +169,7 @@ export default function Setting() {
           <div className="border-t border-dashed py-3 px-2">
             <div className="flex items-center gap-2">
               <p>Số Lượng Người Chơi: </p>
-              <div className="group-input">
-                <p className="border-b min-w-[150px] text-center">{roomDetail?.limit}</p>
-              </div>
+              <p className="border-b min-w-[150px] text-center">{roomDetail?.limit}</p>
             </div>
           </div>
           <div className="border-y border-dashed py-3 px-2 mb-4">
@@ -184,10 +179,9 @@ export default function Setting() {
             <div className="py-1 px-4" key={role}>
               <div className="flex items-center gap-2">
                 <p className="min-w-[100px]">{roleTranslations[role]}: </p>
-                <div className="group-input">
-                  <div className="min-w-[150px] text-center border-b">
-                    {roomDetail?.roles?.[role] || ''}
-                  </div>
+
+                <div className="min-w-[150px] text-center border-b">
+                  {roomDetail?.roles?.[role] || ''}
                 </div>
               </div>
             </div>
