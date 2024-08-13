@@ -100,6 +100,38 @@ export default function Setting() {
     }
   };
 
+  // Hàm tính tổng số lượng vai trò
+  const calculateTotalLimit = (roles: { [key: string]: string }) => {
+    console.log(roles);
+    
+    return Object.values(roles).reduce((total, num) => total + (parseInt(num) || 0), 0)
+  }
+
+  useEffect(() => {
+    if (roomDetail?.roles) {
+      const total = calculateTotalLimit(roomDetail.roles);
+      setRoomDetail((prevDetail: any) => ({
+        ...prevDetail,
+        limit: total,
+      }));
+    }
+  }, [roomDetail?.roles]);
+
+  const handleRoleChange = (role: string, value: string) => {
+    const updatedRoles = {
+      ...roomDetail.roles,
+      [role]: parseInt(value),
+    };
+
+    const totalLimit = calculateTotalLimit(updatedRoles);
+
+    setRoomDetail((prevDetail: any) => ({
+      ...prevDetail,
+      roles: updatedRoles,
+      limit: totalLimit,
+    }));
+  };
+
   return (
     <>
       <Snackbar
@@ -194,16 +226,9 @@ export default function Setting() {
                   <input
                     type="number"
                     className="bg-transparent border-b px-2 py-1 relative focus:outline-none w-full"
-                    value={roomDetail?.roles?.[role] || ''}
-                    onChange={(e) => {
-                      setRoomDetail((prevDetail: any) => ({
-                        ...prevDetail,
-                        roles: {
-                          ...prevDetail.roles,
-                          [role]: e.target.value,
-                        },
-                      }));
-                    }}
+                    value={roomDetail?.roles?.[role] || '0'}
+
+                    onChange={(e) => handleRoleChange(role, e.target.value)}
                     name={role}
                     min={0}
                   />
