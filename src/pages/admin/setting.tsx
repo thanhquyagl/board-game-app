@@ -38,6 +38,8 @@ export default function Setting() {
   const [roomDetail, setRoomDetail] = useState<any>(null);
   const [opensnackbar, setOpenSnackbar] = useState(false);
 
+  const [totalLimit, setTotalLimit] = useState<number>(0)
+
   const handleClose = (
     event: React.SyntheticEvent | Event,
     reason?: SnackbarCloseReason,
@@ -84,10 +86,7 @@ export default function Setting() {
     const { name, value } = e.target;
     setRoomDetail((prevDetail: any) => ({
       ...prevDetail,
-      roles: {
-        ...prevDetail.roles,
-        [name]: value === 'true',
-      },
+      [name]: value === 'true',
     }));
   };
 
@@ -178,15 +177,9 @@ export default function Setting() {
             <div className="flex items-center gap-2">
               <p>Số Lượng Người Chơi: </p>
               <div className="group-input">
-                <input
-                  type="number"
-                  className="bg-transparent border-b px-2 py-1 relative focus:outline-none w-full"
-                  value={roomDetail?.limit || ''}
-                  onChange={handleInputChangeNumber}
-                  name="limit"
-                  min={1}
-                />
+                <div className="border-b min-w-[150px] text-center">{roomDetail?.limit || ''}</div>
               </div>
+              <div className="text-sm">( Bằng tổng số lượng vai trò )</div>
             </div>
 
           </div>
@@ -222,7 +215,7 @@ export default function Setting() {
             <p>Lộ Vai Trò Khi Chết: </p>
             <RadioGroup
               name="revealedOnDeath"
-              value={roomDetail?.roles?.revealedOnDeath ? 'true' : 'false'}
+              value={roomDetail?.revealedOnDeath ? 'true' : 'false'}
               onChange={handleRadioChange}
               row
             >

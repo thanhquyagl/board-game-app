@@ -1,12 +1,12 @@
 'use client'
 
 import { useEffect, useState } from "react";
-import { ref, remove, get, update, onValue } from "firebase/database";
+import { ref, get, update, onValue } from "firebase/database";
 import { database } from "../../../firebase/config";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import Modal from '@mui/material/Modal';
+import PlayerCard from "../../../components/PlayerCard";
 
 
 type PlayerRoom = {
@@ -190,17 +190,13 @@ export default function Player() {
           </div>
           <div className="grid grid-cols-4 items-start gap-1 mt-2 mb-auto">
             {filteredPlayerxroom.map((playerRoom, index) => (
-              <div className="h-[180px] bg-slate-900 bg-wolvesville-large bg-contain bg-no-repeat bg-bottom relative border border-slate-500" key={index}>
-                <p className="bg-slate-600 px-2 py-1 rounded absolute top-2 left-1/2 -translate-x-1/2 text-nowrap text-sm">{index + 1} x {players[playerRoom.id_player]?.name || '...'}</p>
-                <span className="absolute top-[40px] left-1/2 -translate-x-1/2">{playerRoom.del_flg !== 0 && 'Off'}</span>
-                <Image
-                  className="absolute bottom-0 left-1/2 -translate-x-1/2 max-w-[75%]"
-                  src="/assets/avatar-03.png"
-                  width={500}
-                  height={500}
-                  alt="Picture of the author"
-                />
-              </div>
+              <PlayerCard
+              key={index}
+              index={index}
+              playerRoom={playerRoom}
+              players={players}
+              showRemoveButton={false}
+              />
             ))}
           </div>
           <div className="text-center">

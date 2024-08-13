@@ -39,9 +39,8 @@ export default function FormCreateRoom() {
     witch: 1,
     guardian: 1,
     villager: 1,
-    revealedOnDeath: false,
   };
-  
+
   const handleAddRoom = () => {
     if (nameRoom) {
       try {
@@ -61,6 +60,7 @@ export default function FormCreateRoom() {
           type: typeRoom,
           pass: passRoom,
           roles: roles,
+          revealedOnDeath: false,
           start: false
         });
 
