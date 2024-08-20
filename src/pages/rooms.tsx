@@ -16,16 +16,18 @@ type Rooms = {
 
 const Rooms = () => {
 
+  const router = useRouter()
   const [rooms, setRooms] = useState<Rooms[]>([])
   const [idPlayer, setIdPlayer] = useState<string | null>(null)
   const [namePlayer, setNamePlayer] = useState<string | null>('')
-  const router = useRouter();
-  const [statusPass, setStatusPass] = useState<boolean>(false);
+  const [statusPass, setStatusPass] = useState<boolean>(false)
   const [errorPass, setErrorPass] = useState<boolean>(false)
   const [errorPassText, setErrorPassText] = useState<string>('')
-  const [inputPass, setInputPass] = useState<string>('');
-
-  const [openModal, setOpenModal] = useState<boolean>(false);
+  const [inputPass, setInputPass] = useState<string>('')
+  const [roomPass, setRoomPass] = useState<string>('')
+  const [roomId, setRoomId] = useState<string>('')
+  const [roomLength, setRoomLength] = useState<number>(0)
+  const [openModal, setOpenModal] = useState<boolean>(false)
   const handleClose = () => setOpenModal(false);
 
 
@@ -40,7 +42,7 @@ const Rooms = () => {
         }))
         setRooms(userArray);
       } else {
-        console.log('Chưa có phòng chơi nào!')
+        console.error('Chưa có phòng chơi nào!')
       }
     })
     return () => {
@@ -55,7 +57,7 @@ const Rooms = () => {
         setNamePlayer(snapshot.val())
       }
       else {
-        console.log('error');
+        console.error('error');
       }
     })
     return () => {
@@ -86,7 +88,7 @@ const Rooms = () => {
     try {
       update(ref(database, `rooms/${roomId}`), { length: roomLength + 1 });
     } catch (error) {
-      console.log('update room length' + error);
+      console.error('update room length' + error);
     }
 
     const newPlayerRoomRef = push(ref(database, 'player-x-room'));
@@ -139,7 +141,9 @@ const Rooms = () => {
                     }
                     else if (room.pass) {
                       setOpenModal(true)
-                      console.log(room.id);
+                      setRoomPass(room.pass)
+                      setRoomId(room.id)
+                      setRoomLength(room.length)
                     }
                     else {
                       handleJoinRoom(room.id, room.length)
@@ -192,10 +196,15 @@ const Rooms = () => {
                   <button
                     className="border rounded px-3 py-1 bg-red-700 border-red-700 shadow-sm"
                     onClick={() => {
-                      console.log(inputPass);
                       if (!inputPass) {
                         setErrorPass(true)
-                        setErrorPassText('Vui lòng nhập mật khẩu')
+                        setErrorPassText('Vui lòng nhập mật khẩu.')
+                      }
+                      else if (inputPass !== roomPass) {
+                        setErrorPass(true)
+                        setErrorPassText('Mật khẩu không đúng.')
+                      } else {
+                        handleJoinRoom(roomId, roomLength)
                       }
                     }}
                   >

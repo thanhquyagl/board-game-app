@@ -179,9 +179,8 @@ export default function Setting() {
             <div className="py-1 px-4" key={role}>
               <div className="flex items-center gap-2">
                 <p className="min-w-[100px]">{roleTranslations[role]}: </p>
-
                 <div className="min-w-[150px] text-center border-b">
-                  {roomDetail?.roles?.[role] || ''}
+                  {roomDetail?.roles?.[role] || '0'}
                 </div>
               </div>
             </div>
