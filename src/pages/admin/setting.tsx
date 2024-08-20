@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
 import {
   Radio,
@@ -37,8 +38,6 @@ export default function Setting() {
   const [statusPass, setStatusPass] = useState<boolean>(false);
   const [roomDetail, setRoomDetail] = useState<any>(null);
   const [opensnackbar, setOpenSnackbar] = useState(false);
-
-  const [totalLimit, setTotalLimit] = useState<number>(0)
 
   const handleClose = (
     event: React.SyntheticEvent | Event,
@@ -102,8 +101,6 @@ export default function Setting() {
 
   // Hàm tính tổng số lượng vai trò
   const calculateTotalLimit = (roles: { [key: string]: string }) => {
-    console.log(roles);
-    
     return Object.values(roles).reduce((total, num) => total + (parseInt(num) || 0), 0)
   }
 
@@ -122,9 +119,7 @@ export default function Setting() {
       ...roomDetail.roles,
       [role]: parseInt(value),
     };
-
     const totalLimit = calculateTotalLimit(updatedRoles);
-
     setRoomDetail((prevDetail: any) => ({
       ...prevDetail,
       roles: updatedRoles,
@@ -188,20 +183,25 @@ export default function Setting() {
             <div className="flex items-center gap-2">
               <p>Mật Khẩu: </p>
               <div className="relative group-input">
+                <form id="fakeForm" style={{ display: 'none' }}></form>
                 <input
                   type={statusPass ? "text" : "password"}
                   className="bg-transparent border-b px-2 py-1 relative focus:outline-none w-full"
                   value={roomDetail?.pass || ''}
                   onChange={handleInputChange}
                   name="pass"
+                  form="fakeForm"
                 />
                 <button
                   className="absolute top-1/2 -translate-y-1/2 right-3"
                   onClick={() => { setStatusPass(!statusPass) }}
                 >
-                  <VisibilityIcon fontSize="small" />
+                  {statusPass ? (
+                    <VisibilityOffIcon fontSize="small" />
+                  ) : (
+                    <VisibilityIcon fontSize="small" />
+                  )}
                 </button>
-
               </div>
             </div>
           </div>

@@ -1,8 +1,11 @@
-import { push, get, ref, set, update, onValue } from "firebase/database";
 import { useEffect, useState } from "react";
+import { push, get, ref, set, update, onValue } from "firebase/database";
 import { database } from "../../firebase/config";
 import { useRouter } from "next/navigation";
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import Modal from '@mui/material/Modal';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
 type Rooms = {
   id: string;
@@ -16,7 +19,15 @@ const Rooms = () => {
   const [rooms, setRooms] = useState<Rooms[]>([])
   const [idPlayer, setIdPlayer] = useState<string | null>(null)
   const [namePlayer, setNamePlayer] = useState<string | null>('')
-  const router = useRouter()
+  const router = useRouter();
+  const [statusPass, setStatusPass] = useState<boolean>(false);
+  const [errorPass, setErrorPass] = useState<boolean>(false)
+  const [errorPassText, setErrorPassText] = useState<string>('')
+  const [inputPass, setInputPass] = useState<string>('');
+
+  const [openModal, setOpenModal] = useState<boolean>(false);
+  const handleClose = () => setOpenModal(false);
+
 
   useEffect(() => {
     setIdPlayer(sessionStorage.getItem('idPlayerStorage'))
@@ -125,7 +136,12 @@ const Rooms = () => {
                   onClick={() => {
                     if (room.length === room.limit) {
                       alert('Room Full')
-                    } else {
+                    }
+                    else if (room.pass) {
+                      setOpenModal(true)
+                      console.log(room.id);
+                    }
+                    else {
                       handleJoinRoom(room.id, room.length)
                     }
                   }}
@@ -133,9 +149,61 @@ const Rooms = () => {
                   <span>Phòng {room.name}</span>
                   <span>{room.length}/{room.limit}</span>
                 </button>
+
               </div>
-            ))
-            }
+            ))}
+
+
+            <Modal
+              open={openModal}
+              onClose={handleClose}
+            >
+              <div
+                className="text-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-5 border rounded max-w-full w-[600px] bg-gray-950 shadow-sm"
+              >
+                <p className="text-2xl font-bold">Đăng nhập </p>
+                <p className="my-2">Vui lòng nhập Mật Khẩu để vào phòng chơi!</p>
+                <div className="border-y border-dashed py-4 flex flex-col gap-4 my-6">
+                  <div className="relative group-input">
+                    <input
+                      type={statusPass ? "text" : "password"}
+                      className="bg-transparent border-b px-2 py-1 relative focus:outline-none w-full"
+                      value={inputPass}
+                      onChange={(e) => {
+                        setInputPass(e.target.value)
+                        setErrorPass(false)
+                      }}
+                      name="pass"
+                    />
+                    <button
+                      className="absolute top-1/2 -translate-y-1/2 right-3"
+                      onClick={() => {
+                        setStatusPass(!statusPass)
+                      }}
+                    >
+                      {statusPass ? (
+                        <VisibilityOffIcon fontSize="small" />
+                      ) : (
+                        <VisibilityIcon fontSize="small" />
+                      )}
+                    </button>
+                  </div>
+                  {errorPass && <div className="text-red-500">{errorPassText}</div>}
+                  <button
+                    className="border rounded px-3 py-1 bg-red-700 border-red-700 shadow-sm"
+                    onClick={() => {
+                      console.log(inputPass);
+                      if (!inputPass) {
+                        setErrorPass(true)
+                        setErrorPassText('Vui lòng nhập mật khẩu')
+                      }
+                    }}
+                  >
+                    Đăng Nhập
+                  </button>
+                </div>
+              </div>
+            </Modal>
           </div>
         </div>
       </div>
