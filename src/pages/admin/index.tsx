@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import Modal from '@mui/material/Modal';
 import PlayerCard from "../../../components/PlayerCard";
-
+import Head from 'next/head'
 
 type PlayerRoom = {
   id: string;
@@ -115,11 +115,11 @@ export default function Admin() {
   const handleDeletePlayer = async (idPlayerRoom: string) => {
     try {
       const playerRoomRef = ref(database, `player-x-room/${idPlayerRoom}`);
-      remove(ref(database, `player-x-room/${idPlayerRoom}`));
+      await remove(ref(database, `player-x-room/${idPlayerRoom}`));
       await update(playerRoomRef, { rule: false });
       handleClosePlayer()
       setTimeout(() => {
-        remove(ref(database, `player-x-room/${idPlayerRoom}`));
+        remove(playerRoomRef);
       }, 1000)
       handleLengthRoom();
     } catch (error) {
@@ -128,21 +128,22 @@ export default function Admin() {
   };
 
   const handleStartGame = async () => {
-    const updatedRoomDetail = {
-      ...roomDetail,
-      start: true,
-    };
     try {
+      await assignRolesToPlayers();
+      const updatedRoomDetail = {
+        ...roomDetail,
+        start: true,
+      };
       await update(ref(database, `rooms/${id}`), updatedRoomDetail);
-      setRoomDetail(updatedRoomDetail)
-      router.push('/admin/game')
+      setRoomDetail(updatedRoomDetail);
+      router.push('/admin/game');
     } catch (error) {
       console.error('Error starting game: ', error);
     }
-  }
+  };
+  
 
   const filteredPlayerxroom = playerxroom.filter(playerRoom => playerRoom.id_room === id && playerRoom.rule === true);
-
 
   const handleLengthRoom = async () => {
     const updatedRoomDetail = {
@@ -164,8 +165,54 @@ export default function Admin() {
     setOpenModalPlayer(true);
   };
 
+  const [roleArray, setRoleArray] = useState<string[]>([]);
+  const assignRolesToPlayers = async () => {
+    if (!id || !roomDetail?.roles || roleArray.length > 0) return;
+
+    const newRoleArray: string[] = [];
+    Object.entries(roomDetail.roles).forEach(([role, count]) => {
+      const roleCount = count as number;
+      for (let i = 0; i < roleCount; i++) {
+        newRoleArray.push(role);
+      }
+    });
+
+    for (let i = newRoleArray.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [newRoleArray[i], newRoleArray[j]] = [newRoleArray[j], newRoleArray[i]];
+    }
+
+    setRoleArray(newRoleArray);
+
+    try {
+      const playerRoomRef = ref(database, `player-x-room`);
+      const snapshot = await get(playerRoomRef);
+
+      if (snapshot.exists()) {
+        const playerData = snapshot.val();
+        const playersInRoom = Object.entries(playerData)
+          .filter(([, value]) => (value as any).id_room === id)
+          .map(([key]) => key);
+
+        const updates: any = {};
+        playersInRoom.forEach((playerId, index) => {
+          const role = newRoleArray[index] || newRoleArray[newRoleArray.length - 1];
+          updates[`${playerId}/role`] = role;
+        });
+
+        await update(playerRoomRef, updates);
+        console.log("Roles assigned successfully!");
+      }
+    } catch (error) {
+      console.error("Error assigning roles: ", error);
+    }
+  };
+
   return (
     <>
+      <Head>
+        <title>Admin index</title>
+      </Head>
       <div className="bg-transparent absolute top-0 left-0 w-full text-white z-10">
         <div className="flex justify-between gap-2 max-w-2xl  min-h-[60px] mx-auto py-3 px-2">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
@@ -233,13 +280,13 @@ export default function Admin() {
           </div>
           <div className="grid grid-cols-4 items-start gap-1 mt-2 mb-auto">
             {filteredPlayerxroom.map((playerRoom, index) => (
-              <PlayerCard 
-              key={index}
-              index={index}
-              playerRoom={playerRoom}
-              players={players}
-              onRemovePlayer={handleRemovePlayer}
-              showRemoveButton={true}
+              <PlayerCard
+                key={index}
+                index={index}
+                playerRoom={playerRoom}
+                players={players}
+                onRemovePlayer={handleRemovePlayer}
+                showRemoveButton={true}
               />
             ))}
           </div>

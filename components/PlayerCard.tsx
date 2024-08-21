@@ -9,10 +9,11 @@ type PlayerCardProps = {
   playerRoom: any;
   players: any;
   onRemovePlayer?: (id: string) => void;
+  onModalActive?: () => void;
   showRemoveButton?: boolean;
 };
 
-export default function PlayerCard({ index, playerRoom, players, onRemovePlayer, showRemoveButton }: PlayerCardProps) {
+export default function PlayerCard({ index, playerRoom, players, onRemovePlayer, onModalActive, showRemoveButton }: PlayerCardProps) {
 
   return (
     <>

@@ -72,15 +72,6 @@ export default function Setting() {
     }));
   };
 
-  const handleInputChangeNumber = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    const parsedValue = parseInt(value);
-    setRoomDetail((prevDetail: any) => ({
-      ...prevDetail,
-      [name]: parsedValue,
-    }));
-  };
-
   const handleRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setRoomDetail((prevDetail: any) => ({
@@ -91,7 +82,7 @@ export default function Setting() {
 
   const handleSaveSettings = async () => {
     try {
-      await update(ref(database, `rooms/${idRoom}`), roomDetail);
+      await update(ref(database, `rooms/${idRoom}`), roomDetail );
       setOpenSnackbar(true);
     } catch (error) {
       console.error('Error updating settings: ', error);
@@ -227,7 +218,6 @@ export default function Setting() {
                     type="number"
                     className="bg-transparent border-b px-2 py-1 relative focus:outline-none w-full"
                     value={roomDetail?.roles?.[role] || '0'}
-
                     onChange={(e) => handleRoleChange(role, e.target.value)}
                     name={role}
                     min={0}

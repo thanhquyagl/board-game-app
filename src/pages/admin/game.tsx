@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import Modal from '@mui/material/Modal';
+import Head from "next/head";
 
 type PlayerRoom = {
   id: string;
@@ -70,6 +71,16 @@ function ChildModal() {
     </>
   );
 }
+const roleTranslations: { [key: string]: string } = {
+  fool: 'Kẻ Ngốc',
+  hunter: 'Thợ Săn',
+  seer: 'Tiên Tri',
+  werewolf: 'Sói',
+  halfWerewolf: 'Bán Sói',
+  witch: 'Phù Thủy',
+  guardian: 'Bảo Vệ',
+  villager: 'Dân Làng',
+};
 
 export default function Admin() {
   const router = useRouter();
@@ -157,6 +168,9 @@ export default function Admin() {
 
   return (
     <>
+      <Head>
+        <title>Admin game</title>
+      </Head>
       <div className="bg-transparent absolute top-0 left-0 w-full text-white z-10">
         <div className="flex justify-between gap-2 max-w-2xl  min-h-[60px] mx-auto py-3 px-2">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
@@ -183,7 +197,7 @@ export default function Admin() {
               >
                 <p className="text-xl font-bold">Thoát Game</p>
                 <p className="my-2">
-                  Bạn muốn thoát game? <br/>
+                  Bạn muốn thoát game? <br />
                   Bạn sẽ quay về phòng chơi!
                 </p>
                 <div className="flex justify-end gap-3">
@@ -234,12 +248,12 @@ export default function Admin() {
                 <span className="absolute top-[40px] left-1/2 -translate-x-1/2">{playerRoom.del_flg !== 0 && 'Off'}</span>
                 <Image
                   className="absolute bottom-0 left-1/2 -translate-x-1/2 max-w-[75%]"
-                  src="/assets/avatar-03.png"
+                  src="/assets/avatar-02.png"
                   width={500}
                   height={500}
                   alt="Picture of the author"
                 />
-                <span className="absolute bottom-6 left-1/2 -translate-x-1/2">[ vài trò {index + 1} ]</span>
+                <span className="absolute bottom-6 left-1/2 -translate-x-1/2">[{roleTranslations[playerRoom?.role] || ''} ]</span>
                 <button
                   className="absolute bottom-1 left-1/2 -translate-x-1/2 text-nowrap"
                   onClick={() => {
