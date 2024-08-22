@@ -178,6 +178,7 @@ const Rooms = () => {
                         setErrorPass(false)
                       }}
                       name="pass"
+                      autoFocus
                     />
                     <button
                       className="absolute top-1/2 -translate-y-1/2 right-3"

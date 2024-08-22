@@ -19,6 +19,17 @@ type PlayerRoom = {
   [key: string]: any;
 };
 
+const roleTranslations: { [key: string]: string } = {
+  fool: 'Kẻ Ngốc',
+  hunter: 'Thợ Săn',
+  seer: 'Tiên Tri',
+  werewolf: 'Sói',
+  halfWerewolf: 'Bán Sói',
+  witch: 'Phù Thủy',
+  guardian: 'Bảo Vệ',
+  villager: 'Dân Làng',
+};
+
 export default function Player() {
   const router = useRouter();
 
@@ -28,6 +39,7 @@ export default function Player() {
   const [players, setPlayers] = useState<{ [key: string]: any }>({});
   const [playerxroom, setPlayerxroom] = useState<PlayerRoom[]>([]);
   const [idPlayerRoom, setIdPlayerRoom] = useState<string | null>(null);
+  const [rolePlayer, setRolePlayer] = useState<string>('')
 
   const [openModal, setOpenModal] = useState(false);
   const [openModalSeeRole, setOpenModalSeeRole] = useState(false);
@@ -93,6 +105,7 @@ export default function Player() {
     if (idPlayerRoom) {
       const playerRoomRef = ref(database, `player-x-room/${idPlayerRoom}`);
       const unsubscribePlayerRoom = onValue(playerRoomRef, (snapshot) => {
+        setRolePlayer(snapshot.val().role)
         const playerRoomData = snapshot.val();
         if (playerRoomData && playerRoomData.rule === false) {
           router.push('/rooms/');
@@ -184,14 +197,11 @@ export default function Player() {
             <Modal
               open={openModalSeeRole}
               onClose={handleCloseSeeRole}
-              aria-labelledby="modal-modal-title"
-              aria-describedby="modal-modal-description"
             >
-
               <div
                 className="text-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-5 border border-dashed max-w-full w-[600px] bg-gray-950 shadow-sm"
               >
-                <p className="text-xl font-bold text-center">Vai Trò Của Bạn</p>
+                <p className="text-xl font-bold text-center">Vai Trò Của Bạn : [{roleTranslations[rolePlayer]}]</p>
                 <div className="border-t border-dashed py-3 px-4 my-4 flex flex-col gap-4 items-start">
                   <Image
                     src="/img-tien-tri.jpg"
@@ -242,6 +252,7 @@ export default function Player() {
                 playerRoom={playerRoom}
                 players={players}
                 showRemoveButton={false}
+                idPlayer={idPlayer}
               />
             ))}
           </div>
