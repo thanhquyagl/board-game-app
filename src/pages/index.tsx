@@ -10,7 +10,7 @@ export default function Home() {
       <div className="bg-transparent absolute top-0 left-0 w-full text-white z-10">
         <div className="flex justify-between gap-2 max-w-2xl  min-h-[60px] mx-auto py-3 px-2">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-            <h1 className="text-2xl font-semibold"> AGL Game Board</h1>
+            <h1 className="text-base md:text-2xl font-semibold"> AGL Game Board</h1>
           </div>
         </div>
       </div>

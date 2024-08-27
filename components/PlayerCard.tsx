@@ -16,8 +16,8 @@ export default function PlayerCard({ index, playerRoom, players, idPlayer, onRem
 
   return (
     <>
-      <div className={"h-[180px] bg-slate-900 bg-wolvesville-large bg-contain bg-no-repeat bg-bottom relative border " + (players[playerRoom.id_player]?.id === idPlayer ? "border-blue-500" : "border-slate-500")} >
-        <p className="bg-slate-600 px-2 py-1 rounded absolute top-2 left-1/2 -translate-x-1/2 text-nowrap text-sm">
+      <div className={"min-h-[130px] h-[calc((100vh-122px)/4)] max-h-[180px] bg-slate-900 bg-wolvesville-large bg-contain bg-no-repeat bg-bottom relative border " + (players[playerRoom.id_player]?.id === idPlayer ? "border-blue-500" : "border-slate-500")} >
+        <p className="bg-slate-600 px-2 py-1 rounded absolute top-2 left-1/2 -translate-x-1/2 text-nowrap text-xs md:text-sm">
           {index + 1} x {players[playerRoom.id_player]?.name || '...'}
         </p>
         <span className="absolute top-[40px] left-1/2 -translate-x-1/2">
@@ -25,7 +25,7 @@ export default function PlayerCard({ index, playerRoom, players, idPlayer, onRem
         </span>
         {showRemoveButton && onRemovePlayer && (
           <button
-            className="absolute bottom-1 right-1 p-2 flex"
+            className="absolute bottom-1 right-1 p-2 flex z-10"
             onClick={() => onRemovePlayer(playerRoom.id)}
           >
             <LinearScaleIcon sx={{ fontSize: '14px' }} />

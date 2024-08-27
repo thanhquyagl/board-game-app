@@ -6,6 +6,7 @@ import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import Modal from '@mui/material/Modal';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import ModalComponent from "../../components/ModalComponent";
 
 type Rooms = {
   id: string;
@@ -109,7 +110,7 @@ const Rooms = () => {
       <div className="bg-transparent absolute top-0 left-0 w-full text-white z-10">
         <div className="flex justify-between gap-2 max-w-2xl  min-h-[60px] mx-auto py-3 px-2">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-            <h1 className="text-2xl font-semibold"> AGL Game Board</h1>
+            <h1 className="text-base md:text-2xl font-semibold"> AGL Game Board</h1>
           </div>
           <button
             className="px-2"
@@ -157,63 +158,61 @@ const Rooms = () => {
               </div>
             ))}
 
-
-            <Modal
-              open={openModal}
+            <ModalComponent
+              isOpen={openModal}
               onClose={handleClose}
-            >
-              <div
-                className="text-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-5 border rounded max-w-full w-[600px] bg-gray-950 shadow-sm"
-              >
-                <p className="text-2xl font-bold">Đăng nhập </p>
-                <p className="my-2">Vui lòng nhập Mật Khẩu để vào phòng chơi!</p>
-                <div className="border-y border-dashed py-4 flex flex-col gap-4 my-6">
-                  <div className="relative group-input">
-                    <input
-                      type={statusPass ? "text" : "password"}
-                      className="bg-transparent border-b px-2 py-1 relative focus:outline-none w-full"
-                      value={inputPass}
-                      onChange={(e) => {
-                        setInputPass(e.target.value)
-                        setErrorPass(false)
-                      }}
-                      name="pass"
-                      autoFocus
-                    />
+              title="Đăng nhập"
+              content={
+                <>
+                  <p className="my-2">Vui lòng nhập Mật Khẩu để vào phòng chơi!</p>
+                  <div className="border-y border-dashed py-4 flex flex-col gap-4 my-6">
+                    <div className="relative group-input">
+                      <input
+                        type={statusPass ? "text" : "password"}
+                        className="bg-transparent border-b px-2 py-1 relative focus:outline-none w-full"
+                        value={inputPass}
+                        onChange={(e) => {
+                          setInputPass(e.target.value)
+                          setErrorPass(false)
+                        }}
+                        name="pass"
+                        autoFocus
+                      />
+                      <button
+                        className="absolute top-1/2 -translate-y-1/2 right-3"
+                        onClick={() => {
+                          setStatusPass(!statusPass)
+                        }}
+                      >
+                        {statusPass ? (
+                          <VisibilityOffIcon fontSize="small" />
+                        ) : (
+                          <VisibilityIcon fontSize="small" />
+                        )}
+                      </button>
+                    </div>
+                    {errorPass && <div className="text-red-500">{errorPassText}</div>}
                     <button
-                      className="absolute top-1/2 -translate-y-1/2 right-3"
+                      className="border rounded px-3 py-1 bg-red-700 border-red-700 shadow-sm"
                       onClick={() => {
-                        setStatusPass(!statusPass)
+                        if (!inputPass) {
+                          setErrorPass(true)
+                          setErrorPassText('Vui lòng nhập mật khẩu.')
+                        }
+                        else if (inputPass !== roomPass) {
+                          setErrorPass(true)
+                          setErrorPassText('Mật khẩu không đúng.')
+                        } else {
+                          handleJoinRoom(roomId, roomLength)
+                        }
                       }}
                     >
-                      {statusPass ? (
-                        <VisibilityOffIcon fontSize="small" />
-                      ) : (
-                        <VisibilityIcon fontSize="small" />
-                      )}
+                      Đăng Nhập
                     </button>
                   </div>
-                  {errorPass && <div className="text-red-500">{errorPassText}</div>}
-                  <button
-                    className="border rounded px-3 py-1 bg-red-700 border-red-700 shadow-sm"
-                    onClick={() => {
-                      if (!inputPass) {
-                        setErrorPass(true)
-                        setErrorPassText('Vui lòng nhập mật khẩu.')
-                      }
-                      else if (inputPass !== roomPass) {
-                        setErrorPass(true)
-                        setErrorPassText('Mật khẩu không đúng.')
-                      } else {
-                        handleJoinRoom(roomId, roomLength)
-                      }
-                    }}
-                  >
-                    Đăng Nhập
-                  </button>
-                </div>
-              </div>
-            </Modal>
+                </>
+              }
+            />
           </div>
         </div>
       </div>

@@ -9,6 +9,7 @@ import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import SendIcon from '@mui/icons-material/Send';
 import Modal from '@mui/material/Modal';
 import PlayerCard from "../../../components/PlayerCard";
+import ModalComponent from "../../../components/ModalComponent";
 
 
 type PlayerRoom = {
@@ -141,102 +142,62 @@ export default function Player() {
       <div className="bg-transparent absolute top-0 left-0 w-full text-white z-10">
         <div className="flex justify-between gap-2 max-w-2xl  min-h-[60px] mx-auto py-3 px-2">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-            <h1 className="text-2xl font-semibold"> AGL Game Board</h1>
+            <h1 className="text-base md:text-2xl font-semibold"> AGL Game Board</h1>
           </div>
           <>
-            <button
-              className="px-2"
-              onClick={() => {
-                setOpenModal(true)
-              }}
-            >
+            <button className="px-2" onClick={() => { setOpenModal(true) }}>
               <ArrowBackIosNewIcon sx={{ fontSize: '14px', marginBottom: '2px' }} />
               <span>Back</span>
             </button>
-            <Modal
-              open={openModal}
+            <ModalComponent
+              isOpen={openModal}
               onClose={handleClose}
-              aria-labelledby="modal-modal-title"
-              aria-describedby="modal-modal-description"
-            >
-              <div
-                className="text-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-5 border rounded max-w-full w-[600px] bg-gray-950 shadow-sm"
-              >
-                <p className="text-2xl font-bold">Thoát Phòng</p>
-                <p className="my-2">Bạn muốn thoát phòng?</p>
-                <div className="flex justify-end gap-3">
-                  <button
-                    className="border rounded px-3 py-1"
-                    onClick={() => {
-                      handleClose()
-                    }}
-                  >
-                    Canel
-                  </button>
-                  <button
-                    className="border rounded px-3 py-1 bg-red-700 border-red-700 shadow-sm"
-                    onClick={() => {
-                      handleMoveRoom()
-                    }}
-                  >
-                    Exit
-                  </button>
-                </div>
-              </div>
-            </Modal>
-
-            <button
-              className="p-2"
-              title="Setting"
-              onClick={() => {
-                setOpenModalSeeRole(true)
-              }}
-            >
-              [ Xem Vai Trò ]
-            </button>
-            <Modal
-              open={openModalSeeRole}
+              title="Thoát Phòng"
+              content={
+                <p>Bạn muốn thoát phòng?</p>
+              }
+              actions={
+                <>
+                  <button className="border rounded px-3 py-1" onClick={() => { handleClose() }} >Canel</button>
+                  <button className="border rounded px-3 py-1 bg-red-700 border-red-700 shadow-sm" onClick={() => { handleMoveRoom() }} >Exit</button>
+                </>
+              }
+            />
+            <button className="p-2" title="Setting" onClick={() => { setOpenModalSeeRole(true) }}>[ Xem Vai Trò ]</button>
+            <ModalComponent
+              isOpen={openModalSeeRole}
               onClose={handleCloseSeeRole}
-            >
-              <div
-                className="text-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-5 border border-dashed max-w-full w-[600px] bg-gray-950 shadow-sm"
-              >
-                <p className="text-xl font-bold text-center">Vai Trò Của Bạn : [{roleTranslations[rolePlayer]}]</p>
-                <div className="border-t border-dashed py-3 px-4 my-4 flex flex-col gap-4 items-start">
-                  <Image
-                    src="/img-tien-tri.jpg"
-                    width={120}
-                    height={120}
-                    alt="Picture of the author"
-                  />
-                </div>
-                <div className="border-y border-dashed py-5 px-4 my-4 flex flex-col gap-2 items-start">
-                  <p>Mô Tả Vai Trò:</p>
-                  <p>
-                    。。。。。。。。。。。。。。。。。。。。。。。。。。
-                    。。。。。。。。。。。。。。。。。。。。。。。。。。
-                    。。。。。。。。。。。。。。。。。。。。。。。。。。
-                    。。。。。。。。。。。。。。。。。。。。。。。。。。
-                    。。。。。。。。。。。。。。。。。。。。。。。。。。
-                    。。。。。。。。。。。。。。。。。。。。。。。。。。
-                  </p>
-                </div>
-                <div className="flex justify-center gap-3">
-                  <button
-                    className="border rounded px-3 py-1 bg-red-700 border-red-700 shadow-sm"
-                    onClick={() => {
-                      handleCloseSeeRole()
-                    }}
-                  >
-                    Đóng
-                  </button>
-                </div>
-              </div>
-            </Modal>
+              title={<p>Vai Trò Của Bạn : [{roleTranslations[rolePlayer]}]</p>}
+              content={
+                <>
+                  <div className="border-t border-dashed py-3 px-4 my-4 flex flex-col gap-4 items-start">
+                    <Image
+                      src="/images/img-tien-tri.jpg"
+                      width={120}
+                      height={120}
+                      alt="Picture of the author"
+                    />
+                  </div>
+                  <div className="border-y border-dashed py-5 px-4 my-4 flex flex-col gap-2 items-start text-wrap">
+                    <p>Mô Tả Vai Trò:</p>
+                    <p>
+                      test test test test test test test test test test test test test test test test test test test test test
+                      test test test test test test test test test test test test test test test test test test test test test
+                      test test test
+                    </p>
+                  </div>
+                </>
+              }
+              actions={
+                <>
+                  <button className="border rounded px-3 py-1 bg-red-700 border-red-700 shadow-sm" onClick={() => { handleCloseSeeRole() }} >Đóng</button>
+                </>
+              }
+            />
           </>
         </div>
       </div>
-      <div className="bg-slate-900 bg-hero-standard  text-white min-h-screen pt-16 pb-2 px-2 flex">
+      <div className="bg-slate-900 bg-hero-standard  text-white min-h-screen pt-16 pb-2 px-2 flex relative">
         <div className="absolute top-0 left-0 bg-hero-standard w-full h-full bg-filter"></div>
         <div className="relative max-w-2xl mx-auto w-full flex flex-col">
           <div className="px-2 py-1 border">
