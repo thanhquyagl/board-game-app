@@ -8,7 +8,7 @@ import Image from "next/image";
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import Head from "next/head";
 import ModalComponent from "../../../components/ModalComponent";
-import roleData from "../../../lib/rolesWallpaper.json";
+import roleData from "../../../lib/rolesWolvesvilles.json";
 
 type PlayerRoom = {
   id: string;

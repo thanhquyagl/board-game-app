@@ -9,7 +9,7 @@ import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import SendIcon from '@mui/icons-material/Send';
 import PlayerCard from "../../../components/PlayerCard";
 import ModalComponent from "../../../components/ModalComponent";
-import roleData from "../../../lib/rolesWallpaper.json";
+import roleData from "../../../lib/rolesWolvesvilles.json";
 
 type PlayerRoom = {
   id: string;
@@ -171,7 +171,7 @@ export default function Player() {
                 <>
                   <div className="border-t border-dashed py-3 px-4 my-4 flex flex-col gap-4 items-start">
                     <Image
-                      src="/images/seer.jpg"
+                      src={roleData.roles.find(role => role.key === rolePlayer)?.image || "/images/seer.png"}
                       width={120}
                       height={120}
                       alt="Picture of the author"
