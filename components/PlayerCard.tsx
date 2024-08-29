@@ -17,8 +17,10 @@ export default function PlayerCard({ index, playerRoom, players, idPlayer, onRem
   return (
     <>
       <div className={"min-h-[130px] h-[calc((100vh-122px)/4)] max-h-[180px] bg-slate-900 bg-wolvesville-large bg-contain bg-no-repeat bg-bottom relative border " + (players[playerRoom.id_player]?.id === idPlayer ? "border-blue-500" : "border-slate-500")} >
-        <p className="bg-slate-600 px-2 py-1 rounded absolute top-2 left-1/2 -translate-x-1/2 text-nowrap text-xs md:text-sm">
-          {index + 1} x {players[playerRoom.id_player]?.name || '...'}
+        <p className="bg-slate-600 px-2 py-1 rounded absolute top-2 left-1/2 -translate-x-1/2 text-nowrap text-xs md:text-sm flex flex-col items-center md:flex-row md:justify-center gap-1">
+          <p>{index + 1}</p>
+          <span className="hidden md:block"> x </span>
+          <p>{players[playerRoom.id_player]?.name || '...'}</p>
         </p>
         <span className="absolute top-[40px] left-1/2 -translate-x-1/2">
           {playerRoom.del_flg !== 0 && 'Off'}

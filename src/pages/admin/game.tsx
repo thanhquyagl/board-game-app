@@ -1,14 +1,14 @@
 'use client'
 
 import { useEffect, useState } from "react";
-import { ref, remove, get, update, onValue } from "firebase/database";
+import { ref, get, update, onValue } from "firebase/database";
 import { database } from "../../../firebase/config";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
-import Modal from '@mui/material/Modal';
 import Head from "next/head";
 import ModalComponent from "../../../components/ModalComponent";
+import roleData from "../../../lib/rolesWallpaper.json";
 
 type PlayerRoom = {
   id: string;
@@ -59,16 +59,6 @@ function ChildModal() {
     </>
   );
 }
-const roleTranslations: { [key: string]: string } = {
-  fool: 'Kẻ Ngốc',
-  hunter: 'Thợ Săn',
-  seer: 'Tiên Tri',
-  werewolf: 'Sói',
-  halfWerewolf: 'Bán Sói',
-  witch: 'Phù Thủy',
-  guardian: 'Bảo Vệ',
-  villager: 'Dân Làng',
-};
 
 export default function Admin() {
   const router = useRouter();
@@ -263,7 +253,11 @@ export default function Admin() {
           <div className="grid grid-cols-4 items-start gap-1 mt-2 mb-auto">
             {filteredPlayerxroom.map((playerRoom, index) => (
               <div className="h-[180px] bg-slate-900 bg-wolvesville-large bg-contain bg-no-repeat bg-bottom relative border border-slate-500" key={index}>
-                <p className="bg-slate-600 px-2 py-1 rounded absolute top-2 left-1/2 -translate-x-1/2 text-nowrap text-sm">{index + 1} x {players[playerRoom.id_player]?.name || '...'}</p>
+                <p className="bg-slate-600 px-2 py-1 rounded absolute top-2 left-1/2 -translate-x-1/2 text-nowrap text-xs md:text-sm flex flex-col items-center md:flex-row md:justify-center gap-1">
+                  <p>{index + 1}</p>
+                  <span className="hidden md:block"> x </span>
+                  <p>{players[playerRoom.id_player]?.name || '...'}</p>
+                </p>
                 <span className="absolute top-[40px] left-1/2 -translate-x-1/2">{playerRoom.del_flg !== 0 && 'Off'}</span>
                 <Image
                   className="absolute bottom-0 left-1/2 -translate-x-1/2 max-w-[75%]"
@@ -272,7 +266,7 @@ export default function Admin() {
                   height={500}
                   alt="Picture of the author"
                 />
-                <span className="absolute bottom-[90px] md:bottom-7 left-1/2 -translate-x-1/2 text-nowrap text-xs md:text-base">[{roleTranslations[playerRoom?.role] || ''} ]</span>
+                <span className="absolute bottom-[90px] md:bottom-7 left-1/2 -translate-x-1/2 text-nowrap text-xs md:text-base">[{roleData.roles.find(role => role.key === playerRoom?.role)?.name}]</span>
                 <button
                   className="absolute bottom-1 left-1/2 -translate-x-1/2 text-nowrap text-xs md:text-base"
                   onClick={() => {

@@ -123,7 +123,7 @@ const Rooms = () => {
           </button>
         </div>
       </div>
-      <div className="bg-slate-900 bg-hero-standard  text-white min-h-screen pt-16 px-2">
+      <div className="bg-slate-900 bg-hero-standard text-white min-h-screen pt-16 px-2 relative">
         <div className="absolute top-0 left-0 bg-hero-standard w-full h-full bg-filter"></div>
 
         <div className="relative max-w-2xl mx-auto">

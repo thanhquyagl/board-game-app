@@ -1,16 +1,15 @@
 'use client'
 
 import { useEffect, useState } from "react";
-import { ref, remove, get, update, onValue } from "firebase/database";
+import { ref, get, update, onValue } from "firebase/database";
 import { database } from "../../../firebase/config";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import SendIcon from '@mui/icons-material/Send';
-import Modal from '@mui/material/Modal';
 import PlayerCard from "../../../components/PlayerCard";
 import ModalComponent from "../../../components/ModalComponent";
-
+import roleData from "../../../lib/rolesWallpaper.json";
 
 type PlayerRoom = {
   id: string;
@@ -136,7 +135,7 @@ export default function Player() {
   })
 
   const filteredPlayerxroom = playerxroom.filter(playerRoom => playerRoom.id_room === id && playerRoom.rule === true);
-
+  
   return (
     <>
       <div className="bg-transparent absolute top-0 left-0 w-full text-white z-10">
@@ -167,12 +166,12 @@ export default function Player() {
             <ModalComponent
               isOpen={openModalSeeRole}
               onClose={handleCloseSeeRole}
-              title={<p>Vai Trò Của Bạn : [{roleTranslations[rolePlayer]}]</p>}
+              title={<p>Vai Trò Của Bạn : [{roleData.roles.find(role => role.key === rolePlayer)?.name}]</p>}
               content={
                 <>
                   <div className="border-t border-dashed py-3 px-4 my-4 flex flex-col gap-4 items-start">
                     <Image
-                      src="/images/img-tien-tri.jpg"
+                      src="/images/seer.jpg"
                       width={120}
                       height={120}
                       alt="Picture of the author"
@@ -181,9 +180,7 @@ export default function Player() {
                   <div className="border-y border-dashed py-5 px-4 my-4 flex flex-col gap-2 items-start text-wrap">
                     <p>Mô Tả Vai Trò:</p>
                     <p>
-                      test test test test test test test test test test test test test test test test test test test test test
-                      test test test test test test test test test test test test test test test test test test test test test
-                      test test test
+                    {roleData.roles.find(role => role.key === rolePlayer)?.description}
                     </p>
                   </div>
                 </>

@@ -1,0 +1,52 @@
+{
+  "roles": [
+    {
+      "key": "fool",
+      "name": "Kẻ Ngốc",
+      "image": "path_to_image/fool.png",
+      "description": "Kẻ Ngốc là một người chơi đặc biệt, không có khả năng đặc biệt nào. Mục tiêu của họ là bị loại khỏi game để giành chiến thắng."
+    },
+    {
+      "key": "hunter",
+      "name": "Thợ Săn",
+      "image": "path_to_image/hunter.png",
+      "description": "Thợ Săn có khả năng kéo theo một người khác cùng chết khi bị loại khỏi game. Họ có thể lựa chọn người này ngay trước khi họ chết."
+    },
+    {
+      "key": "seer",
+      "name": "Tiên Tri",
+      "image": "/images/seer.jpg",
+      "description": "Tiên Tri có khả năng nhìn thấy vai trò thực sự của một người chơi mỗi đêm. Họ sử dụng thông tin này để bảo vệ người chơi làng."
+    },
+    {
+      "key": "werewolf",
+      "name": "Sói",
+      "image": "path_to_image/werewolf.png",
+      "description": "Sói là kẻ ác, tấn công và loại bỏ người chơi làng mỗi đêm. Mục tiêu của họ là tiêu diệt hết tất cả những người chơi làng."
+    },
+    {
+      "key": "halfWerewolf",
+      "name": "Bán Sói",
+      "image": "path_to_image/halfWerewolf.png",
+      "description": "Bán Sói là một nhân vật lưỡng tính, ban ngày là người làng nhưng ban đêm là Sói. Họ có thể chọn bên nào để ủng hộ."
+    },
+    {
+      "key": "witch",
+      "name": "Phù Thủy",
+      "image": "path_to_image/witch.png",
+      "description": "Phù Thủy có hai phép thuật: cứu một người khỏi bị Sói giết và giết một người. Họ phải sử dụng phép thuật khôn ngoan để cân bằng trận đấu."
+    },
+    {
+      "key": "guardian",
+      "name": "Bảo Vệ",
+      "image": "path_to_image/guardian.png",
+      "description": "Bảo Vệ có khả năng bảo vệ một người chơi khỏi bị giết mỗi đêm. Người bảo vệ không thể bảo vệ chính mình hoặc cùng một người hai lần liên tiếp."
+    },
+    {
+      "key": "villager",
+      "name": "Dân Làng",
+      "image": "path_to_image/villager.png",
+      "description": "Dân Làng là những người chơi bình thường, không có khả năng đặc biệt. Mục tiêu của họ là tìm ra và loại bỏ tất cả Sói."
+    }
+  ]
+}
