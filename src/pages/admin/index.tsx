@@ -87,6 +87,8 @@ export default function Admin() {
   const handleDeleteRoom = async () => {
     try {
       await remove(ref(database, `rooms/${id}`));
+      await remove(ref(database, `messages/${id}`));
+
       const playerRoomsRef = ref(database, 'player-x-room');
       const playerRoomsSnapshot = await get(playerRoomsRef);
       if (playerRoomsSnapshot.exists()) {

@@ -6,10 +6,10 @@ import { database } from "../../../firebase/config";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
-import SendIcon from '@mui/icons-material/Send';
 import PlayerCard from "../../../components/PlayerCard";
 import ModalComponent from "../../../components/ModalComponent";
 import roleData from "../../../lib/rolesWolvesvilles.json";
+import MessagesList from "../../../components/MessagesList";
 
 type PlayerRoom = {
   id: string;
@@ -135,7 +135,7 @@ export default function Player() {
   })
 
   const filteredPlayerxroom = playerxroom.filter(playerRoom => playerRoom.id_room === id && playerRoom.rule === true);
-  
+
   return (
     <>
       <div className="bg-transparent absolute top-0 left-0 w-full text-white z-10">
@@ -180,7 +180,7 @@ export default function Player() {
                   <div className="border-y border-dashed py-5 px-4 my-4 flex flex-col gap-2 items-start text-wrap">
                     <p>Mô Tả Vai Trò:</p>
                     <p>
-                    {roleData.roles.find(role => role.key === rolePlayer)?.description}
+                      {roleData.roles.find(role => role.key === rolePlayer)?.description}
                     </p>
                   </div>
                 </>
@@ -214,12 +214,13 @@ export default function Player() {
               />
             ))}
           </div>
-          <div className="text-center">
-            <div className="relative">
-              <input type="text" className="border bg-transparent w-full py-3 pl-4 pr-11 focus:outline-none" />
-              <SendIcon className="absolute top-1/2 -translate-y-1/2 right-3" sx={{ fontSize: "20px" }} />
-            </div>
-          </div>
+
+          <MessagesList
+            roomId={id as string}
+            playerId={idPlayer as string}
+            players={players}
+          />
+
         </div>
       </div>
     </>

@@ -47,14 +47,13 @@ export default function FormCreateRoom() {
         const slug = Slugify(nameRoom);
         const usesRef = ref(database, 'rooms');
         const newDataRef = push(usesRef);
-        const roomId = newDataRef.key;
-        const idAdmin = newDataRef.key as string;
+        const roomId = newDataRef.key as string;
 
         set(newDataRef, {
           id: roomId,
           name: nameRoom,
           slug,
-          admin: idAdmin,
+          admin: roomId,
           limit: 8,
           length: 0,
           type: typeRoom,
@@ -64,8 +63,8 @@ export default function FormCreateRoom() {
           start: false
         });
 
-        sessionStorage.setItem("idAdminStorage", idAdmin);
-        setIdAdmin(idAdmin)
+        sessionStorage.setItem("idAdminStorage", roomId);
+        setIdAdmin(roomId)
         setNameRoom('');
         router.push(`/admin`);
       } catch (error) {
