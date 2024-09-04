@@ -53,8 +53,27 @@ const MessagesList: React.FC<Props> = ({ roomId, playerId, players }) => {
   }, [messages]);
 
   return (
-    <div className="text-center">
-      <div className="border border-slate-500 mb-2 h-[300px] bg-slate-950 p-2 text-left overflow-y-auto scrollbar-cumtor">
+    <div className="flex flex-col-reverse">
+
+      <label className="relative peer">
+        <input
+          type="text"
+          className="border bg-transparent w-full py-3 pl-4 pr-11 focus:outline-none"
+          value={newMessage}
+          onChange={(e) => setNewMessage(e.target.value)}
+          onKeyDown={handleSendMessage}
+        />
+        <button
+          className="absolute top-1/2 -translate-y-1/2 right-3"
+          onClick={handleSendMessage}
+        >
+          <SendIcon sx={{ fontSize: "20px" }} />
+        </button>
+      </label>
+
+      <div
+        className="invisible peer-has-[:focus]:visible transition-all border border-slate-500 mb-2 h-[300px] bg-slate-950 p-2 text-left overflow-y-auto scrollbar-cumtor"
+      >
         {messages.length === 0 ? (
           <p>Chưa có tin nhắn...</p>
         ) : (
@@ -68,23 +87,6 @@ const MessagesList: React.FC<Props> = ({ roomId, playerId, players }) => {
           ))
         )}
         <div ref={messagesEndRef} />
-      </div>
-
-      <div className="relative">
-        <input
-          type="text"
-          className="border bg-transparent w-full py-3 pl-4 pr-11 focus:outline-none"
-          value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
-          onKeyDown={handleSendMessage}
-          autoFocus
-        />
-        <button
-          className="absolute top-1/2 -translate-y-1/2 right-3"
-          onClick={handleSendMessage}
-        >
-          <SendIcon sx={{ fontSize: "20px" }} />
-        </button>
       </div>
     </div>
   );

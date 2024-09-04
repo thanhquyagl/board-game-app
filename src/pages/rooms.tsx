@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { push, get, ref, set, update, onValue } from "firebase/database";
+import { push, get, ref, set, update, onValue, remove } from "firebase/database";
 import { database } from "../../firebase/config";
 import { useRouter } from "next/navigation";
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
@@ -105,6 +105,16 @@ const Rooms = () => {
     });
   };
 
+  const handleLogOut = async () => {
+    try {
+      await remove(ref(database, `players/${idPlayer}`))
+      sessionStorage.removeItem("idPlayerStorage")
+      router.push('/')
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   return (
     <>
       <div className="bg-transparent absolute top-0 left-0 w-full text-white z-10">
@@ -127,7 +137,18 @@ const Rooms = () => {
         <div className="absolute top-0 left-0 bg-hero-standard w-full h-full bg-filter"></div>
 
         <div className="relative max-w-2xl mx-auto">
-          <p className="text-xl font-medium border-b border-dashed py-4 mb-4">Người Chơi: {namePlayer}</p>
+          <div className="flex  justify-between border-b border-dashed py-4 mb-4">
+            <p className="text-xl font-medium ">Người Chơi: {namePlayer}</p>
+
+            <div className="c-btn__main">
+              <button
+                className="flex-none bg-transparent text-white px-6 py-1 font-semibold hover:text-slate-900"
+                onClick={handleLogOut}
+              >
+                <span className="relative">Đăng Xuất</span>
+              </button>
+            </div>
+          </div>
           <h2 className="text-xl font-medium border-b border-dashed py-4 mb-4">Danh Sách Phòng</h2>
 
           <div className="grid grid-cols-1 gap-4">
