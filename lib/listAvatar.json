@@ -1,0 +1,16 @@
+{
+  "avatar" : [
+    {
+      "key": "1",
+      "url": "/images/avatar-01.png"
+    },
+    {
+      "key": "2",
+      "url": "/images/avatar-02.png"
+    },
+    {
+      "key": "3",
+      "url": "/images/avatar-03.png"
+    }
+  ]
+}

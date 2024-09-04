@@ -11,6 +11,9 @@ import {
 
 import { ref, onValue, update } from "firebase/database";
 import { database } from "../../../firebase/config";
+import Image from "next/image";
+import ModalComponent from "../../../components/ModalComponent";
+import listAvatar from "../../../lib/listAvatar.json";
 
 const roleTranslations: { [key: string]: string } = {
   fool: 'Kẻ Ngốc',
@@ -30,6 +33,12 @@ export default function Setting() {
   const [roomDetail, setRoomDetail] = useState<any>(null);
   const [player, setPlayer] = useState<any>([])
   const [opensnackbar, setOpenSnackbar] = useState(false);
+  const [onOpenModal, setOnOpenModal] = useState<boolean>(false)
+  const [avatarValue, setAvatarValue] = useState<string>('/images/avatar-01.png')
+
+  const handleCloseModal = () => {
+    setOnOpenModal(false);
+  };
 
   const handleClose = (
     event: React.SyntheticEvent | Event,
@@ -47,6 +56,7 @@ export default function Setting() {
     const showNamePlayer = onValue(usesRefPlayer, async (snapshot) => {
       if (snapshot.exists()) {
         setPlayer(snapshot.val());
+        setAvatarValue(snapshot.val()?.avatar)
       }
       else {
         console.log('error');
@@ -80,6 +90,14 @@ export default function Setting() {
     setPlayer((prevDetail: any) => ({
       ...prevDetail,
       [name]: value,
+    }));
+  }
+
+  const handleAvatarChange = (e: string) => {
+    const value = e
+    setPlayer((prevDetail: any) => ({
+      ...prevDetail,
+      "avatar": value,
     }));
   }
 
@@ -135,6 +153,58 @@ export default function Setting() {
                   value={player?.name || ''}
                   onChange={handleInputChange}
                   name="name"
+                />
+              </div>
+
+            </div>
+          </div>
+          <div className=" py-3 px-2">
+            <div className="flex items-center gap-4">
+              <p>Avatar: </p>
+              <div className="border flex">
+                <button onClick={() => { setOnOpenModal(true) }}>
+                  <Image
+                    src={avatarValue || '/images/avatar-01.png'}
+                    alt="use-avatar"
+                    width={100}
+                    height={100}
+                  />
+                </button>
+                <ModalComponent
+                  isOpen={onOpenModal}
+                  onClose={handleCloseModal}
+                  title='Chọn ảnh đại diện cho bạn'
+                  content={
+                    <div className="grid  grid-cols-3 md:grid-cols-4 gap-1">
+                      {
+                        Object.entries(listAvatar.avatar).map((t, k) =>
+                          <label
+                            key={k}
+                            className="flex items-center justify-center border cursor-pointer hover:border-blue-400"
+                            htmlFor={'avatar' + k}
+                          >
+                            <input type="radio" id={'avatar' + k} value={t[1].url} hidden
+                              onChange={(e) => {
+                                setAvatarValue(e.target.value)
+                                handleAvatarChange(e.target.value)
+                              }}
+                            />
+                            <Image
+                              src={t[1].url || 'images/avatar-01.png'}
+                              alt="use-avatar"
+                              width={120}
+                              height={120}
+                            />
+                          </label>
+                        )
+                      }
+                    </div>
+                  }
+                  actions={
+                    <button onClick={handleCloseModal} className="border rounded px-3 py-1 bg-red-700 border-red-700 shadow-sm">
+                      Đóng
+                    </button>
+                  }
                 />
               </div>
               <div className="c-btn__main">
