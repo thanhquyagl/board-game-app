@@ -9,7 +9,6 @@ import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import PlayerCard from "../../../components/PlayerCard";
 import ModalComponent from "../../../components/ModalComponent";
 import roleData from "../../../lib/rolesWolvesvilles.json";
-import MessagesList from "../../../components/MessagesList";
 
 type PlayerRoom = {
   id: string;
@@ -34,7 +33,7 @@ export default function Player() {
   const router = useRouter();
 
   const [id, setId] = useState<string | null>('');
-  const [roomDetail, serRoomDetail] = useState<any>(null);
+  const [roomDetail, setRoomDetail] = useState<any>(null);
   const [idPlayer, setIdPlayer] = useState<string | null>(null);
   const [players, setPlayers] = useState<{ [key: string]: any }>({});
   const [playerxroom, setPlayerxroom] = useState<PlayerRoom[]>([]);
@@ -53,7 +52,7 @@ export default function Player() {
     const roomRef = ref(database, `rooms/${id}`);
     const unsubscribeRoom = onValue(roomRef, (snapshot) => {
       if (snapshot.exists()) {
-        serRoomDetail(snapshot.val());
+        setRoomDetail(snapshot.val());
       } else {
         router.push('/rooms/');
       }
@@ -138,7 +137,7 @@ export default function Player() {
 
   return (
     <>
-      <div className="bg-transparent absolute top-0 left-0 w-full text-white z-10">
+      <div className="bg-transparent absolute top-0 left-0 w-full z-10 text-white">
         <div className="flex justify-between gap-2 max-w-2xl  min-h-[60px] mx-auto py-3 px-2">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
             <h1 className="text-base md:text-2xl font-semibold"> AGL Game Board</h1>
@@ -194,8 +193,32 @@ export default function Player() {
           </>
         </div>
       </div>
-      <div className="bg-slate-900 bg-hero-standard  text-white min-h-screen pt-16 pb-2 px-2 flex relative">
-        <div className="absolute top-0 left-0 bg-hero-standard w-full h-full bg-filter"></div>
+      <div className={(roomDetail?.nightMode === false ? 'bg-slate-600 ' : 'bg-slate-900 ') + "bg-hero-standard text-white min-h-screen pt-16 pb-2 px-2 flex relative overflow-hidden"}>
+        <div className={"absolute top-0 left-0 bg-hero-standard w-full h-full " + (roomDetail?.nightMode === false ? 'bg-filter-night-mode' : 'bg-filter')}></div>
+        <div className="absolute top-12 right-12 w-[120px] h-[120px] group-icon-night-mode">
+          <div
+            className={"absolute top-0 left-0 items " + (roomDetail?.nightMode === true ? '' : 'active')}
+          >
+            <Image
+              src="/images/day-mode.png"
+              alt="day mode"
+              width={120}
+              height={120}
+            />
+            <p className="text-center icon-text">Sáng Rồi</p>
+          </div>
+          <div
+            className={"absolute top-0 left-0 items " + (roomDetail?.nightMode === true ? 'active' : '')}
+          >
+            <Image
+              src="/images/moon-mode.png"
+              alt="day mode"
+              width={120}
+              height={120}
+            />
+            <p className="text-center icon-text">Tối Rồi</p>
+          </div>
+        </div>
         <div className="relative max-w-2xl mx-auto w-full flex flex-col">
           <div className="px-2 py-1 border">
             <div className="relative pl-4">
@@ -214,13 +237,6 @@ export default function Player() {
               />
             ))}
           </div>
-
-          <MessagesList
-            roomId={id as string}
-            playerId={idPlayer as string}
-            players={players}
-          />
-
         </div>
       </div>
     </>

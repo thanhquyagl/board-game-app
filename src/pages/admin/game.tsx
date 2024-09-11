@@ -142,6 +142,19 @@ export default function Admin() {
     }
   }
 
+  const handleNightMode = async (nightMode: boolean) => {
+    try {
+      const updatedRoomDetail = {
+        ...roomDetail,
+        nightMode: nightMode,
+      };
+      await update(ref(database, `rooms/${id}`), updatedRoomDetail);
+      setRoomDetail(updatedRoomDetail);
+    } catch (error) {
+      console.error('Error starting game: ', error);
+    }
+  };
+
   const filteredPlayerxroom = playerxroom.filter(playerRoom => playerRoom.id_room === id && playerRoom.rule === true);
 
   return (
@@ -200,10 +213,14 @@ export default function Admin() {
                     <button
                       className="flex-none bg-transparent text-white px-6 py-1 font-semibold hover:text-slate-900 w-full"
                       onClick={() => {
-                        alert('Chuyển sang ban đêm')
+                        if (roomDetail?.nightMode) {
+                          handleNightMode(false)
+                        } else {
+                          handleNightMode(true)
+                        }
                       }}
                     >
-                      <span className="relative">Ban đêm</span>
+                      <span className="relative">{roomDetail?.nightMode === false ? 'Ban đêm' : 'Ban ngày'}</span>
                     </button>
                   </div>
                   <div className="c-btn__main min-w-[120px] items-center">
@@ -242,8 +259,32 @@ export default function Admin() {
           </>
         </div>
       </div>
-      <div className="bg-slate-900 bg-hero-standard  text-white min-h-screen pt-16 pb-2 px-2 flex relative">
-        <div className="absolute top-0 left-0 bg-hero-standard w-full h-full bg-filter"></div>
+      <div className={(roomDetail?.nightMode === false ? 'bg-slate-600 ' : 'bg-slate-900 ') + "bg-hero-standard text-white min-h-screen pt-16 pb-2 px-2 flex relative overflow-hidden"}>
+        <div className={"absolute top-0 left-0 bg-hero-standard w-full h-full " + (roomDetail?.nightMode === false ? 'bg-filter-night-mode' : 'bg-filter')}></div>
+        <div className="absolute top-12 right-12 w-[120px] h-[120px] group-icon-night-mode">
+          <div
+            className={"absolute top-0 left-0 items " + (roomDetail?.nightMode === true ? '' : 'active')}
+          >
+            <Image
+              src="/images/day-mode.png"
+              alt="day mode"
+              width={120}
+              height={120}
+            />
+            <p className="text-center icon-text">Sáng Rồi</p>
+          </div>
+          <div
+            className={"absolute top-0 left-0 items " + (roomDetail?.nightMode === true ? 'active' : '')}
+          >
+            <Image
+              src="/images/moon-mode.png"
+              alt="day mode"
+              width={120}
+              height={120}
+            />
+            <p className="text-center icon-text">Tối Rồi</p>
+          </div>
+        </div>
         <div className="relative max-w-2xl mx-auto w-full flex flex-col">
           <div className="px-2 py-1 border">
             <div className="relative pl-4">
@@ -315,10 +356,14 @@ export default function Admin() {
               <button
                 className="flex-none bg-transparent text-white px-6 py-1 font-semibold hover:text-slate-900"
                 onClick={() => {
-                  alert('Chuyển sang ban đêm')
+                  if (roomDetail?.nightMode) {
+                    handleNightMode(false)
+                  } else {
+                    handleNightMode(true)
+                  }
                 }}
               >
-                <span className="relative">Ban đêm</span>
+                <span className="relative">{roomDetail?.nightMode === false ? 'Ban đêm' : 'Ban ngày'}</span>
               </button>
             </div>
             <div className="c-btn__main">

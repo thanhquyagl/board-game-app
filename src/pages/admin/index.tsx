@@ -5,7 +5,6 @@ import { ref, remove, get, update, onValue } from "firebase/database";
 import { database } from "../../../firebase/config";
 import { useRouter } from "next/navigation";
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
-import Modal from '@mui/material/Modal';
 import PlayerCard from "../../../components/PlayerCard";
 import Head from 'next/head'
 import ModalComponent from "../../../components/ModalComponent";
@@ -136,6 +135,7 @@ export default function Admin() {
       const updatedRoomDetail = {
         ...roomDetail,
         start: true,
+        nightMode: false,
       };
       await update(ref(database, `rooms/${id}`), updatedRoomDetail);
       setRoomDetail(updatedRoomDetail);

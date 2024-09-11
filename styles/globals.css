@@ -104,6 +104,10 @@
   filter: invert(70%) brightness(100%) brightness(10%) contrast(70%);
 }
 
+.bg-filter-night-mode {
+  filter: blur(5px) grayscale(80%) contrast(0%);
+}
+
 .scrollbar-cumtor::-webkit-scrollbar {
   width: 8px;
   background-color: #020617;
@@ -125,4 +129,23 @@
     color-stop(0.72, rgb(73, 125, 189)),
     color-stop(0.86, rgb(28, 58, 148))
   );
+}
+
+.group-icon-night-mode .items {
+  transition: transform 0.8s ease-in-out;
+  transform: translate(200%, 50%);
+}
+
+.group-icon-night-mode .items.active {
+  transform: translate(0, 0);
+}
+
+.group-icon-night-mode .icon-text {
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path 0.8s ease-in-out;
+  transition-delay: 1s;
+}
+
+.group-icon-night-mode .items.active .icon-text {
+  clip-path: inset(0);
 }

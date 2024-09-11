@@ -7,6 +7,7 @@ import Modal from '@mui/material/Modal';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import ModalComponent from "../../components/ModalComponent";
+import Head from "next/head";
 
 type Rooms = {
   id: string;
@@ -117,6 +118,9 @@ const Rooms = () => {
 
   return (
     <>
+    <Head>
+      <title>Danh sách phòng chơi</title>
+    </Head>
       <div className="bg-transparent absolute top-0 left-0 w-full text-white z-10">
         <div className="flex justify-between gap-2 max-w-2xl  min-h-[60px] mx-auto py-3 px-2">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">

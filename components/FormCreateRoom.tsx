@@ -60,7 +60,8 @@ export default function FormCreateRoom() {
           pass: passRoom,
           roles: roles,
           revealedOnDeath: false,
-          start: false
+          start: false,
+          nightMode: false,
         });
 
         sessionStorage.setItem("idAdminStorage", roomId);

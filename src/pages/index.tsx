@@ -1,5 +1,6 @@
 'use client';
 
+import Head from "next/head";
 import FormCreatePlayer from "../../components/FormCreatePlayer";
 import FormCreateRoom from "../../components/FormCreateRoom";
 
@@ -7,6 +8,9 @@ export default function Home() {
 
   return (
     <>
+    <Head>
+      <title>AGL Game Board</title>
+    </Head>
       <div className="bg-transparent absolute top-0 left-0 w-full text-white z-10">
         <div className="flex justify-between gap-2 max-w-2xl  min-h-[60px] mx-auto py-3 px-2">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
