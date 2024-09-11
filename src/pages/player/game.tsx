@@ -9,6 +9,8 @@ import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import PlayerCard from "../../../components/PlayerCard";
 import ModalComponent from "../../../components/ModalComponent";
 import roleData from "../../../lib/rolesWolvesvilles.json";
+import IconDayMoon from "../../../components/IconDayMoon";
+import Head from "next/head";
 
 type PlayerRoom = {
   id: string;
@@ -137,6 +139,9 @@ export default function Player() {
 
   return (
     <>
+      <Head>
+        <title>PLay Game {roomDetail && roomDetail.type}</title>
+      </Head>
       <div className="bg-transparent absolute top-0 left-0 w-full z-10 text-white">
         <div className="flex justify-between gap-2 max-w-2xl  min-h-[60px] mx-auto py-3 px-2">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
@@ -195,30 +200,9 @@ export default function Player() {
       </div>
       <div className={(roomDetail?.nightMode === false ? 'bg-slate-600 ' : 'bg-slate-900 ') + "bg-hero-standard text-white min-h-screen pt-16 pb-2 px-2 flex relative overflow-hidden"}>
         <div className={"absolute top-0 left-0 bg-hero-standard w-full h-full " + (roomDetail?.nightMode === false ? 'bg-filter-night-mode' : 'bg-filter')}></div>
-        <div className="absolute top-12 right-12 w-[120px] h-[120px] group-icon-night-mode">
-          <div
-            className={"absolute top-0 left-0 items " + (roomDetail?.nightMode === true ? '' : 'active')}
-          >
-            <Image
-              src="/images/day-mode.png"
-              alt="day mode"
-              width={120}
-              height={120}
-            />
-            <p className="text-center icon-text">Sáng Rồi</p>
-          </div>
-          <div
-            className={"absolute top-0 left-0 items " + (roomDetail?.nightMode === true ? 'active' : '')}
-          >
-            <Image
-              src="/images/moon-mode.png"
-              alt="day mode"
-              width={120}
-              height={120}
-            />
-            <p className="text-center icon-text">Tối Rồi</p>
-          </div>
-        </div>
+        <IconDayMoon
+          nightMode={roomDetail?.nightMode}
+        />
         <div className="relative max-w-2xl mx-auto w-full flex flex-col">
           <div className="px-2 py-1 border">
             <div className="relative pl-4">
