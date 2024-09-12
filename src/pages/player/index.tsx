@@ -74,7 +74,7 @@ export default function Player() {
           setIdPlayerRoom(currentPlayerRoom.id);
         }
       } else {
-        console.log('Không tìm thấy dữ liệu');
+        console.error('Không tìm thấy dữ liệu');
       }
     }, (error) => {
       console.error('Lỗi lấy dữ liệu player-x-room: ', error);

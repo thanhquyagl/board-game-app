@@ -98,7 +98,8 @@ const Rooms = () => {
       id_player: idPlayer,
       id_room: roomId,
       del_flg: 0,
-      rule: true
+      rule: true,
+      vote_player: 0
     };
 
     set(newPlayerRoomRef, newPlayerRoom).then(() => {

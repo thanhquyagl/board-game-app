@@ -156,6 +156,19 @@ export default function Admin() {
     }
   };
 
+  const handleRoomVotes = async (status: boolean) => {
+    try {
+      const updatedRoomDetail = {
+        ...roomDetail,
+        votes: status,
+      };
+      await update(ref(database, `rooms/${id}`), updatedRoomDetail);
+      setRoomDetail(updatedRoomDetail);
+    } catch (error) {
+      console.error('Error starting game: ', error);
+    }
+  }
+
   const filteredPlayerxroom = playerxroom.filter(playerRoom => playerRoom.id_room === id && playerRoom.rule === true);
 
   return (
@@ -360,15 +373,19 @@ export default function Admin() {
               <button
                 className="flex-none bg-transparent text-white px-6 py-1 font-semibold hover:text-slate-900"
                 onClick={() => {
-                  alert('Bỏ phiếu')
+                  if (roomDetail?.votes) {
+                    handleRoomVotes(false)
+                  } else {
+                    handleRoomVotes(true)
+                  }
                 }}
               >
-                <span className="relative">Bỏ Phiếu</span>
+                <span className="relative">{roomDetail?.votes ? 'Dừng Bỏ Phiêu' : 'Bỏ Phiếu'}</span>
               </button>
             </div>
           </div>
         </div>
-      </div>
+      </div >
     </>
   )
 }

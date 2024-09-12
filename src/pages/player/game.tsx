@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ref, get, update, onValue } from "firebase/database";
 import { database } from "../../../firebase/config";
 import { useRouter } from "next/navigation";
@@ -46,6 +46,8 @@ export default function Player() {
   const [openModalSeeRole, setOpenModalSeeRole] = useState(false);
   const handleClose = () => setOpenModal(false);
   const handleCloseSeeRole = () => setOpenModalSeeRole(false);
+  const isVoted = useRef(false)
+
 
   useEffect(() => {
     setIdPlayer(sessionStorage.getItem('idPlayerStorage'));
@@ -132,8 +134,31 @@ export default function Player() {
   useEffect(() => {
     if (roomDetail?.start === false) {
       router.push('/player/')
+
     }
   })
+
+  const handleMorningVote = async (id: string, idRoom: string, role: string) => {
+    if(isVoted.current) return
+    const voterPlayerRoom = playerxroom.find((pr: any) => pr.id_player === id && pr.id_room === idRoom);
+    const votePlayers = voterPlayerRoom?.vote_player
+    try {
+      if (voterPlayerRoom?.id) {
+        const playerRoomRef = ref(database, `player-x-room/${voterPlayerRoom.id}`);
+        await update(playerRoomRef, { vote_player: votePlayers + 1 });
+        handleClose()
+        isVoted.current = true
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  useEffect(()=>{
+    if(roomDetail?.votes) {
+      isVoted.current = false
+    }
+  },[roomDetail?.votes])
 
   const filteredPlayerxroom = playerxroom.filter(playerRoom => playerRoom.id_room === id && playerRoom.rule === true);
 
@@ -218,6 +243,7 @@ export default function Player() {
                 players={players}
                 showRemoveButton={false}
                 idPlayer={idPlayer}
+                handleRound={roomDetail?.votes && handleMorningVote}
               />
             ))}
           </div>
