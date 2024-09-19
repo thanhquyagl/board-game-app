@@ -20,17 +20,6 @@ type PlayerRoom = {
   [key: string]: any;
 };
 
-const roleTranslations: { [key: string]: string } = {
-  fool: 'Kẻ Ngốc',
-  hunter: 'Thợ Săn',
-  seer: 'Tiên Tri',
-  werewolf: 'Sói',
-  halfWerewolf: 'Bán Sói',
-  witch: 'Phù Thủy',
-  guardian: 'Bảo Vệ',
-  villager: 'Dân Làng',
-};
-
 export default function Player() {
   const router = useRouter();
 
@@ -47,7 +36,6 @@ export default function Player() {
   const handleClose = () => setOpenModal(false);
   const handleCloseSeeRole = () => setOpenModalSeeRole(false);
   const isVoted = useRef(false)
-
 
   useEffect(() => {
     setIdPlayer(sessionStorage.getItem('idPlayerStorage'));
@@ -108,7 +96,7 @@ export default function Player() {
     if (idPlayerRoom) {
       const playerRoomRef = ref(database, `player-x-room/${idPlayerRoom}`);
       const unsubscribePlayerRoom = onValue(playerRoomRef, (snapshot) => {
-        setRolePlayer(snapshot.val().role)
+        setRolePlayer(snapshot.val()?.role)
         const playerRoomData = snapshot.val();
         if (playerRoomData && playerRoomData.rule === false) {
           router.push('/rooms/');
@@ -138,8 +126,26 @@ export default function Player() {
     }
   })
 
+  const [idPlayerClicked, setIdPlayerClicked] = useState<string>('')
+
   const handleMorningVote = async (id: string, idRoom: string, role: string) => {
-    if(isVoted.current) return
+    setIdPlayerClicked(id)
+    if (idPlayerClicked !== id) {
+      isVoted.current = false
+      try {
+
+        const previousVotedPlayerRoom = playerxroom.find((pr: any) => pr.id_player === idPlayerClicked && pr.id_room === idRoom);
+        if (previousVotedPlayerRoom) {
+          const previousVotedPlayerRoomRef = ref(database, `player-x-room/${previousVotedPlayerRoom.id}`);
+          await update(previousVotedPlayerRoomRef, {
+            vote_player: previousVotedPlayerRoom.vote_player - 1
+          });
+        }
+      } catch (error) {
+        console.error(error)
+      }
+    }
+    if (isVoted.current) return
     const voterPlayerRoom = playerxroom.find((pr: any) => pr.id_player === id && pr.id_room === idRoom);
     const votePlayers = voterPlayerRoom?.vote_player
     try {
@@ -154,11 +160,11 @@ export default function Player() {
     }
   }
 
-  useEffect(()=>{
-    if(roomDetail?.votes) {
+  useEffect(() => {
+    if (roomDetail?.votes) {
       isVoted.current = false
     }
-  },[roomDetail?.votes])
+  }, [roomDetail?.votes])
 
   const filteredPlayerxroom = playerxroom.filter(playerRoom => playerRoom.id_room === id && playerRoom.rule === true);
 

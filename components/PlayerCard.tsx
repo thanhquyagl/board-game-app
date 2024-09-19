@@ -49,13 +49,25 @@ export default function PlayerCard({ index, playerRoom, players, idPlayer, showR
             <LinearScaleIcon sx={{ fontSize: '14px' }} />
           </button>
         )}
-        <Image
-          className="absolute bottom-0 left-1/2 -translate-x-1/2 max-w-[75%]"
-          src={players[playerRoom.id_player]?.avatar || '/images/avatar-01.png'}
-          width={500}
-          height={500}
-          alt="Picture of the author"
-        />
+        {
+          playerRoom?.rip ? (
+            <Image
+              className="absolute bottom-0 left-1/2 -translate-x-1/2 max-w-[50%]"
+              src={'/images/icon_rip.png'}
+              width={500}
+              height={500}
+              alt="Picture of the author"
+            />
+          ) : (
+            <Image
+              className="absolute bottom-0 left-1/2 -translate-x-1/2 max-w-[75%]"
+              src={players[playerRoom.id_player]?.avatar || '/images/avatar-01.png'}
+              width={500}
+              height={500}
+              alt="Picture of the author"
+            />
+          )
+        }
       </div>
 
     </>

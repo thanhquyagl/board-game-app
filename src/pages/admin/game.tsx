@@ -126,7 +126,7 @@ export default function Admin() {
       unsubscribeRoom();
       unsubscribePlayerRoom();
     };
-  }, [id, router]);
+  }, [id, router, roomDetail]);
 
 
   const handleStartGame = async () => {
@@ -170,6 +170,44 @@ export default function Admin() {
   }
 
   const filteredPlayerxroom = playerxroom.filter(playerRoom => playerRoom.id_room === id && playerRoom.rule === true);
+
+  const [numberVoted, setNumberVotes] = useState<number>(0)
+
+  const ResultVoted = () => {
+    const { voted_player, id_voted_player } = filteredPlayerxroom.reduce(
+      (acc, player) => {
+        if (player.vote_player > acc.voted_player) {
+          return {
+            voted_player: player.vote_player,
+            id_voted_player: player.id_player
+          };
+        }
+        return acc;
+      },
+      { voted_player: 0, id_voted_player: '' }
+    );
+
+    const voterPlayerRoom = playerxroom.find((pr: any) => pr.id_player === id_voted_player && pr.id_room === id);
+    const id_pxr = voterPlayerRoom?.id as any
+    handleRipPlayer(id_pxr)
+  };
+
+  const handleRipPlayer = async (id_pxr: string) => {
+    try {
+      const updatedRoomDetail = {
+        ...roomDetail,
+        rip: true,
+      };
+      await update(ref(database, `player-x-room/${id_pxr}`), updatedRoomDetail);
+      setRoomDetail(updatedRoomDetail);
+    } catch (error) {
+      console.error('Error starting game: ', error);
+    }
+  }
+
+  const handleRemoveAllVoteds = () => {
+
+  }
 
   return (
     <>
@@ -375,6 +413,7 @@ export default function Admin() {
                 onClick={() => {
                   if (roomDetail?.votes) {
                     handleRoomVotes(false)
+                    ResultVoted()
                   } else {
                     handleRoomVotes(true)
                   }
