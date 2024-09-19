@@ -89,6 +89,7 @@ export default function Player() {
     return () => {
       unsubscribeRoom();
       unsubscribePlayerRoom();
+      setIdPlayerClicked('')
     };
   }, [id, idPlayer, router]);
 
@@ -122,7 +123,6 @@ export default function Player() {
   useEffect(() => {
     if (roomDetail?.start === false) {
       router.push('/player/')
-
     }
   })
 
@@ -131,6 +131,8 @@ export default function Player() {
   const handleMorningVote = async (id: string, idRoom: string, role: string) => {
     setIdPlayerClicked(id)
     if (idPlayerClicked !== id) {
+      console.log(idPlayerClicked);
+
       isVoted.current = false
       try {
 
@@ -138,12 +140,13 @@ export default function Player() {
         if (previousVotedPlayerRoom) {
           const previousVotedPlayerRoomRef = ref(database, `player-x-room/${previousVotedPlayerRoom.id}`);
           await update(previousVotedPlayerRoomRef, {
-            vote_player: previousVotedPlayerRoom.vote_player - 1
+            vote_player: previousVotedPlayerRoom.vote_player !== 0 && previousVotedPlayerRoom.vote_player - 1
           });
         }
       } catch (error) {
         console.error(error)
       }
+
     }
     if (isVoted.current) return
     const voterPlayerRoom = playerxroom.find((pr: any) => pr.id_player === id && pr.id_room === idRoom);
@@ -240,17 +243,21 @@ export default function Player() {
               01:29
             </div>
           </div>
+          <div>
+          </div>
           <div className="grid grid-cols-4 items-start gap-1 mt-2 mb-auto">
             {filteredPlayerxroom.map((playerRoom, index) => (
-              <PlayerCard
-                key={index}
-                index={index}
-                playerRoom={playerRoom}
-                players={players}
-                showRemoveButton={false}
-                idPlayer={idPlayer}
-                handleRound={roomDetail?.votes && handleMorningVote}
-              />
+              <>
+                <PlayerCard
+                  key={index}
+                  index={index}
+                  playerRoom={playerRoom}
+                  players={players}
+                  showRemoveButton={false}
+                  idPlayer={idPlayer}
+                  handleRound={roomDetail?.votes && handleMorningVote}
+                />
+              </>
             ))}
           </div>
         </div>

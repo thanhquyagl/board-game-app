@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from "react";
-import { ref, get, update, onValue } from "firebase/database";
+import { ref, get, update, onValue, remove } from "firebase/database";
 import { database } from "../../../firebase/config";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -171,7 +171,6 @@ export default function Admin() {
 
   const filteredPlayerxroom = playerxroom.filter(playerRoom => playerRoom.id_room === id && playerRoom.rule === true);
 
-  const [numberVoted, setNumberVotes] = useState<number>(0)
 
   const ResultVoted = () => {
     const { voted_player, id_voted_player } = filteredPlayerxroom.reduce(
@@ -188,25 +187,25 @@ export default function Admin() {
     );
 
     const voterPlayerRoom = playerxroom.find((pr: any) => pr.id_player === id_voted_player && pr.id_room === id);
-    const id_pxr = voterPlayerRoom?.id as any
+    const id_pxr = voterPlayerRoom?.id as string
     handleRipPlayer(id_pxr)
+    handleRemoveAllVoteds(id as string);
   };
 
   const handleRipPlayer = async (id_pxr: string) => {
     try {
-      const updatedRoomDetail = {
-        ...roomDetail,
-        rip: true,
-      };
-      await update(ref(database, `player-x-room/${id_pxr}`), updatedRoomDetail);
-      setRoomDetail(updatedRoomDetail);
+      await update(ref(database, `player-x-room/${id_pxr}`), { rip: true, vote_player: 0 });
     } catch (error) {
       console.error('Error starting game: ', error);
     }
   }
 
-  const handleRemoveAllVoteds = () => {
-
+  const handleRemoveAllVoteds = (idRoom: string) => {
+    filteredPlayerxroom.forEach(async (playerRoom: any) => {
+      if (playerRoom.id_room === id) {
+        update(ref(database, `player-x-room/${playerRoom.id}`), { vote_player: 0 });
+      }
+    });
   }
 
   return (

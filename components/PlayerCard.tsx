@@ -21,7 +21,7 @@ export default function PlayerCard({ index, playerRoom, players, idPlayer, showR
         className={"min-h-[130px] h-[calc((100vh-122px)/4)] max-h-[180px] bg-slate-900 bg-wolvesville-large bg-contain bg-no-repeat bg-bottom relative border " + (players[playerRoom.id_player]?.id === idPlayer ? "border-blue-500 " : "border-slate-500 ") + (playerRoom.del_flg !== 0 && 'filter blur-[1px]')}
 
       >
-        {idPlayer != playerRoom?.id_player && handleRound && (
+        {idPlayer != playerRoom?.id_player && handleRound && !playerRoom?.rip && (
           <button
             className="absolute top-0 left-0 bg-transparent w-full h-full z-10"
             onClick={() => {
@@ -36,7 +36,7 @@ export default function PlayerCard({ index, playerRoom, players, idPlayer, showR
           <p>{players[playerRoom.id_player]?.name || ''}</p>
         </p>
         <span className="absolute top-[40px] left-1/2 -translate-x-1/2">
-          {playerRoom.vote_player !== 0 && playerRoom.vote_player}
+          {playerRoom.vote_player > 0 && playerRoom.vote_player}
         </span>
         <span className="absolute top-[40px] left-1/2 -translate-x-1/2">
           {playerRoom.del_flg !== 0 && 'Off'}
