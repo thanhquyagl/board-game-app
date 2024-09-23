@@ -145,7 +145,6 @@ export default function Admin() {
     }
   };
 
-
   const filteredPlayerxroom = playerxroom.filter(playerRoom => playerRoom.id_room === id && playerRoom.rule === true);
 
   const handleLengthRoom = async () => {
@@ -210,7 +209,6 @@ export default function Admin() {
       console.error("Error assigning roles: ", error);
     }
   };
-
   return (
     <>
       <Head>

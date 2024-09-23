@@ -171,6 +171,7 @@ export default function Player() {
 
   const filteredPlayerxroom = playerxroom.filter(playerRoom => playerRoom.id_room === id && playerRoom.rule === true);
 
+  console.log(idPlayer)
   return (
     <>
       <Head>
@@ -247,17 +248,15 @@ export default function Player() {
           </div>
           <div className="grid grid-cols-4 items-start gap-1 mt-2 mb-auto">
             {filteredPlayerxroom.map((playerRoom, index) => (
-              <>
-                <PlayerCard
-                  key={index}
-                  index={index}
-                  playerRoom={playerRoom}
-                  players={players}
-                  showRemoveButton={false}
-                  idPlayer={idPlayer}
-                  handleRound={roomDetail?.votes && handleMorningVote}
-                />
-              </>
+              <PlayerCard
+                key={index}
+                index={index}
+                playerRoom={playerRoom}
+                players={players}
+                showRemoveButton={false}
+                idPlayer={idPlayer}
+                handleRound={roomDetail?.votes && !playerRoom?.rip && !playerxroom.find(pr => pr.id_player === idPlayer)?.rip ? handleMorningVote : undefined}
+              />
             ))}
           </div>
         </div>
