@@ -1,6 +1,6 @@
-
 import Image from "next/image";
 import LinearScaleIcon from '@mui/icons-material/LinearScale';
+import roleData from "../lib/rolesWolvesvilles.json";
 
 type PlayerCardProps = {
   index: number;
@@ -27,9 +27,7 @@ export default function PlayerCard({ index, playerRoom, players, idPlayer, showR
             onClick={() => {
               handleRound(playerRoom.id_player, playerRoom.id_room, playerRoom.role)
             }}
-          >
-            Vote
-          </button>
+          ></button>
         )}
         <p className="bg-slate-600 px-2 py-1 rounded absolute top-2 left-1/2 -translate-x-1/2 text-nowrap text-xs md:text-sm flex flex-col items-center md:flex-row md:justify-center gap-1">
           <p>{index + 1}</p>
@@ -69,8 +67,24 @@ export default function PlayerCard({ index, playerRoom, players, idPlayer, showR
             />
           )
         }
-      </div>
+        {showRemoveButton && (
+          <span className="absolute bottom-[90px] md:bottom-7 left-1/2 -translate-x-1/2 text-nowrap text-xs md:text-base">[{roleData.roles.find(role => role.key === playerRoom?.role)?.name}]</span>
+        )}
+        {onModalActive &&(
 
+          <button
+          className="absolute bottom-1 left-1/2 -translate-x-1/2 text-nowrap text-xs md:text-base"
+          onClick={() => {
+            if (onModalActive) {
+              onModalActive();
+            }
+            
+          }}
+          >
+          [ Hành Động ]
+        </button>
+        )}
+      </div>
     </>
   )
 }

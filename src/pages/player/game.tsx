@@ -171,7 +171,6 @@ export default function Player() {
 
   const filteredPlayerxroom = playerxroom.filter(playerRoom => playerRoom.id_room === id && playerRoom.rule === true);
 
-  console.log(idPlayer)
   return (
     <>
       <Head>

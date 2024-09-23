@@ -10,6 +10,7 @@ import Head from "next/head";
 import ModalComponent from "../../../components/ModalComponent";
 import roleData from "../../../lib/rolesWolvesvilles.json";
 import IconDayMoon from "../../../components/IconDayMoon";
+import PlayerCard from "../../../components/PlayerCard";
 
 type PlayerRoom = {
   id: string;
@@ -69,12 +70,19 @@ export default function Admin() {
   const [playerxroom, setPlayerxroom] = useState<PlayerRoom[]>([]);
   const [roomDetail, setRoomDetail] = useState<any>(null);
 
+  const [selectedPlayer, setSelectedPlayer] = useState<any>(null);
   const [openModal, setOpenModal] = useState(false);
   const [openModalAction, setOpenModalAction] = useState(false);
   const [openModalConvert, setOpenModalConvert] = useState(false);
+
   const handleClose = () => setOpenModal(false);
   const handleCloseAction = () => setOpenModalAction(false);
   const handleCloseConvert = () => setOpenModalConvert(false);
+
+  const handleOpenActionModal = (playerRoom: any) => {
+    setSelectedPlayer(playerRoom);
+    setOpenModalAction(true);
+  };
 
   useEffect(() => {
     const idAdminStorage = sessionStorage.getItem('idAdminStorage');
@@ -170,7 +178,6 @@ export default function Admin() {
   }
 
   const filteredPlayerxroom = playerxroom.filter(playerRoom => playerRoom.id_room === id && playerRoom.rule === true);
-
 
   const ResultVoted = () => {
     const { voted_player, id_voted_player } = filteredPlayerxroom.reduce(
@@ -323,30 +330,14 @@ export default function Admin() {
           </div>
           <div className="grid grid-cols-4 items-start gap-1 mt-2 mb-auto">
             {filteredPlayerxroom.map((playerRoom, index) => (
-              <div className="h-[180px] bg-slate-900 bg-wolvesville-large bg-contain bg-no-repeat bg-bottom relative border border-slate-500" key={index}>
-                <p className="bg-slate-600 px-2 py-1 rounded absolute top-2 left-1/2 -translate-x-1/2 text-nowrap text-xs md:text-sm flex flex-col items-center md:flex-row md:justify-center gap-1">
-                  <p>{index + 1}</p>
-                  <span className="hidden md:block"> x </span>
-                  <p>{players[playerRoom.id_player]?.name || '...'}</p>
-                </p>
-                <span className="absolute top-[40px] left-1/2 -translate-x-1/2">{playerRoom.del_flg !== 0 && 'Off'}</span>
-                <Image
-                  className="absolute bottom-0 left-1/2 -translate-x-1/2 max-w-[75%]"
-                  src="/images/avatar-02.png"
-                  width={500}
-                  height={500}
-                  alt="Picture of the author"
-                />
-                <span className="absolute bottom-[90px] md:bottom-7 left-1/2 -translate-x-1/2 text-nowrap text-xs md:text-base">[{roleData.roles.find(role => role.key === playerRoom?.role)?.name}]</span>
-                <button
-                  className="absolute bottom-1 left-1/2 -translate-x-1/2 text-nowrap text-xs md:text-base"
-                  onClick={() => {
-                    setOpenModalAction(true)
-                  }}
-                >
-                  [ Hành Động ]
-                </button>
-              </div>
+              <PlayerCard
+                key={index}
+                index={index}
+                playerRoom={playerRoom}
+                players={players}
+                showRemoveButton={true}
+                onModalActive={() => { handleOpenActionModal(playerRoom) }}
+              />
             ))}
           </div>
           <ModalComponent
@@ -357,7 +348,9 @@ export default function Admin() {
               <>
                 <div className="border-t border-dashed py-3 px-4 mt-4">
                   <div className="text-center c-btn__main min-w-[200px] items-center flex-none bg-transparent text-white px-6 py-1">
-                    Người chơi X
+
+                    {selectedPlayer ? `Người chơi: ${players[selectedPlayer.id_player]?.name || '...'}` : 'Người chơi không tồn tại'}
+
                   </div>
                 </div>
                 <div className="border-y border-dashed py-3 px-4 mb-4 flex flex-col gap-2 items-start">
