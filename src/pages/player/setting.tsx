@@ -112,7 +112,7 @@ export default function Setting() {
   };
 
   return (
-    <>
+    <div>
       <Snackbar
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         open={opensnackbar}
@@ -261,6 +261,6 @@ export default function Setting() {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }

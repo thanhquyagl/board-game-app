@@ -7,7 +7,7 @@ import FormCreateRoom from "../../components/FormCreateRoom";
 export default function Home() {
 
   return (
-    <>
+    <main>
     <Head>
       <title>AGL Game Board</title>
     </Head>
@@ -25,6 +25,6 @@ export default function Home() {
           <FormCreatePlayer />
         </div>
       </div>
-    </>
+    </main>
   );
 }

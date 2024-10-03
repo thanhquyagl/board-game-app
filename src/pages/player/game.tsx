@@ -172,7 +172,7 @@ export default function Player() {
   const filteredPlayerxroom = playerxroom.filter(playerRoom => playerRoom.id_room === id && playerRoom.rule === true);
 
   return (
-    <>
+    <div>
       <Head>
         <title>PLay Game {roomDetail && roomDetail.type}</title>
       </Head>
@@ -181,7 +181,7 @@ export default function Player() {
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
             <h1 className="text-base md:text-2xl font-semibold"> AGL Game Board</h1>
           </div>
-          <>
+          <div>
             <button className="px-2" onClick={() => { setOpenModal(true) }}>
               <ArrowBackIosNewIcon sx={{ fontSize: '14px', marginBottom: '2px' }} />
               <span>Back</span>
@@ -194,10 +194,10 @@ export default function Player() {
                 <p>Bạn muốn thoát phòng?</p>
               }
               actions={
-                <>
+                <div>
                   <button className="border rounded px-3 py-1" onClick={() => { handleClose() }} >Canel</button>
                   <button className="border rounded px-3 py-1 bg-red-700 border-red-700 shadow-sm" onClick={() => { handleMoveRoom() }} >Exit</button>
-                </>
+                </div>
               }
             />
             <button className="p-2" title="Setting" onClick={() => { setOpenModalSeeRole(true) }}>[ Xem Vai Trò ]</button>
@@ -206,7 +206,7 @@ export default function Player() {
               onClose={handleCloseSeeRole}
               title={<p>Vai Trò Của Bạn : [{roleData.roles.find(role => role.key === rolePlayer)?.name}]</p>}
               content={
-                <>
+                <div>
                   <div className="border-t border-dashed py-3 px-4 my-4 flex flex-col gap-4 items-start">
                     <Image
                       src={roleData.roles.find(role => role.key === rolePlayer)?.image || "/images/seer.png"}
@@ -221,15 +221,15 @@ export default function Player() {
                       {roleData.roles.find(role => role.key === rolePlayer)?.description}
                     </p>
                   </div>
-                </>
+                </div>
               }
               actions={
-                <>
+                <div>
                   <button className="border rounded px-3 py-1 bg-red-700 border-red-700 shadow-sm" onClick={() => { handleCloseSeeRole() }} >Đóng</button>
-                </>
+                </div>
               }
             />
-          </>
+          </div>
         </div>
       </div>
       <div className={(roomDetail?.nightMode === false ? 'bg-slate-600 ' : 'bg-slate-900 ') + "bg-hero-standard text-white min-h-screen pt-16 pb-2 px-2 flex relative overflow-hidden"}>
@@ -260,6 +260,6 @@ export default function Player() {
           </div>
         </div>
       </div>
-    </>
+    </div>
   )
 }

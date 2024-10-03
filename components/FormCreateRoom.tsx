@@ -77,7 +77,7 @@ export default function FormCreateRoom() {
   };
 
   return (
-    <>
+    <div>
       <Snackbar
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         open={opensnackbar}
@@ -149,6 +149,6 @@ export default function FormCreateRoom() {
           </div>
         </div>
       </div>
-    </>
+    </div>
   )
 }

@@ -210,7 +210,7 @@ export default function Admin() {
     }
   };
   return (
-    <>
+    <div>
       <Head>
         <title>Admin index</title>
       </Head>
@@ -219,38 +219,36 @@ export default function Admin() {
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
             <h1 className="text-base md:text-2xl font-semibold"> AGL Game Board</h1>
           </div>
-          <>
-            <button
-              className="px-2"
-              onClick={() => {
-                setOpenModal(true);
-              }}
-            >
-              <ArrowBackIosNewIcon sx={{ fontSize: '14px', marginBottom: '2px' }} />
-              <span>Back</span>
-            </button>
-            <ModalComponent
-              isOpen={openModal}
-              onClose={handleClose}
-              title="Thoát Phòng"
-              content={<p>Bạn muốn thoát phòng? Phòng sẽ bị xoá khi bạn thoát ra!</p>}
-              actions={
-                <>
-                  <button className="border rounded px-3 py-1" onClick={handleClose}>Quay lại</button>
-                  <button className="border rounded px-3 py-1 bg-red-700 border-red-700 shadow-sm" onClick={handleDeleteRoom}>Tiếp tục</button>
-                </>
-              }
-            />
-            <button
-              className="p-2"
-              title="Setting"
-              onClick={() => {
-                router.push(`/admin/setting?idRoom=${id}`)
-              }}
-            >
-              [ Setting ]
-            </button>
-          </>
+          <button
+            className="px-2"
+            onClick={() => {
+              setOpenModal(true);
+            }}
+          >
+            <ArrowBackIosNewIcon sx={{ fontSize: '14px', marginBottom: '2px' }} />
+            <span>Back</span>
+          </button>
+          <ModalComponent
+            isOpen={openModal}
+            onClose={handleClose}
+            title="Thoát Phòng"
+            content={<p>Bạn muốn thoát phòng? Phòng sẽ bị xoá khi bạn thoát ra!</p>}
+            actions={
+              <div className="flex justify-end gap-3">
+                <button className="border rounded px-3 py-1" onClick={handleClose}>Quay lại</button>
+                <button className="border rounded px-3 py-1 bg-red-700 border-red-700 shadow-sm" onClick={handleDeleteRoom}>Tiếp tục</button>
+              </div>
+            }
+          />
+          <button
+            className="p-2"
+            title="Setting"
+            onClick={() => {
+              router.push(`/admin/setting?idRoom=${id}`)
+            }}
+          >
+            [ Setting ]
+          </button>
         </div>
       </div>
       <div className="bg-slate-900 bg-hero-standard  text-white min-h-screen pt-16 pb-2 px-2 flex relative">
@@ -273,20 +271,20 @@ export default function Admin() {
               />
             ))}
           </div>
-          <>
+          <div>
             <ModalComponent
               isOpen={openModalPlayer}
               onClose={handleClosePlayer}
               title="Xoá Người Chơi"
               content={<p>Bạn muốn xoá người chơi ra <u>{roomDetail && roomDetail.name}</u> của bạn?</p>}
               actions={
-                <>
+                <div className="flex justify-end gap-3">
                   <button className="border rounded px-3 py-1" onClick={handleClosePlayer}>Quay lại</button>
                   <button className="border rounded px-3 py-1 bg-red-700 border-red-700 shadow-sm" onClick={handleOkPopupPlayer}>Tiếp tục</button>
-                </>
+                </div>
               }
             />
-          </>
+          </div>
           <div className="text-center">
             <div className="c-btn__main">
               <button
@@ -305,6 +303,6 @@ export default function Admin() {
           </div>
         </div>
       </div>
-    </>
+    </div>
   )
 }

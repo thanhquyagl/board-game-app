@@ -30,7 +30,7 @@ function ChildModal() {
   };
 
   return (
-    <>
+    <div>
       <div className="c-btn__main min-w-[200px] items-center">
         <button onClick={handleOpen} className="flex-none bg-transparent text-white px-6 py-1 font-semibold hover:text-slate-900 w-full">
           <span className="relative">Tiên tri soi bài</span>
@@ -58,7 +58,7 @@ function ChildModal() {
           </button>
         }
       />
-    </>
+    </div>
   );
 }
 
@@ -216,7 +216,7 @@ export default function Admin() {
   }
 
   return (
-    <>
+    <div>
       <Head>
         <title>Admin game</title>
       </Head>
@@ -225,96 +225,94 @@ export default function Admin() {
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
             <h1 className="text-base md:text-2xl font-semibold"> AGL Game Board</h1>
           </div>
-          <>
-            <button
-              className="px-2"
-              onClick={() => {
-                setOpenModal(true)
-              }}
-            >
-              <ArrowBackIosNewIcon sx={{ fontSize: '14px', marginBottom: '2px' }} />
-              <span>Back</span>
-            </button>
-            <ModalComponent
-              isOpen={openModal}
-              onClose={handleClose}
-              title="Thoát Game"
-              content={
-                <p>
-                  Bạn muốn thoát game? <br />
-                  Bạn sẽ quay về phòng chơi!
-                </p>
-              }
-              actions={
-                <>
-                  <button className="border rounded px-3 py-1" onClick={() => { handleClose() }}>Quay lại</button>
-                  <button className="border rounded px-3 py-1 bg-red-700 border-red-700 shadow-sm" onClick={() => { handleStartGame() }}>Thoát Game</button>
-                </>
-              }
-            />
-            <button
-              className="p-2"
-              title="Setting"
-              onClick={() => {
-                setOpenModalConvert(true)
-              }}
-            >
-              [ Chuyển Đổi ]
-            </button>
-            <ModalComponent
-              isOpen={openModalConvert}
-              onClose={handleCloseConvert}
-              title={<p className="text-center">Chuyển Đổi Giai Đoạn</p>}
-              content={
-                <div className="border-y border-dashed py-3 px-4 my-4 flex flex-col gap-4 items-start">
-                  <div className="c-btn__main min-w-[120px] items-center">
-                    <button
-                      className="flex-none bg-transparent text-white px-6 py-1 font-semibold hover:text-slate-900 w-full"
-                      onClick={() => {
-                        if (roomDetail?.nightMode) {
-                          handleNightMode(false)
-                        } else {
-                          handleNightMode(true)
-                        }
-                      }}
-                    >
-                      <span className="relative">{roomDetail?.nightMode === false ? 'Ban đêm' : 'Ban ngày'}</span>
-                    </button>
-                  </div>
-                  <div className="c-btn__main min-w-[120px] items-center">
-                    <button
-                      className="flex-none bg-transparent text-white px-6 py-1 font-semibold hover:text-slate-900 w-full"
-                      onClick={() => {
-                        alert('Thảo luận')
-                      }}
-                    >
-                      <span className="relative">Thảo luận</span>
-                    </button>
-                  </div>
-                  <div className="c-btn__main min-w-[120px] items-center">
-                    <button
-                      className="flex-none bg-transparent text-white px-6 py-1 font-semibold hover:text-slate-900 w-full"
-                      onClick={() => {
-                        alert('Bỏ phiếu')
-                      }}
-                    >
-                      <span className="relative">Bỏ Phiếu</span>
-                    </button>
-                  </div>
-                  <div className="c-btn__main min-w-[120px] items-center">
-                    <button
-                      className="flex-none bg-transparent text-white px-6 py-1 font-semibold hover:text-slate-900 w-full"
-                    >
-                      <span className="relative">...</span>
-                    </button>
-                  </div>
+          <button
+            className="px-2"
+            onClick={() => {
+              setOpenModal(true)
+            }}
+          >
+            <ArrowBackIosNewIcon sx={{ fontSize: '14px', marginBottom: '2px' }} />
+            <span>Back</span>
+          </button>
+          <ModalComponent
+            isOpen={openModal}
+            onClose={handleClose}
+            title="Thoát Game"
+            content={
+              <p>
+                Bạn muốn thoát game? <br />
+                Bạn sẽ quay về phòng chơi!
+              </p>
+            }
+            actions={
+              <div className="flex justify-end gap-3">
+                <button className="border rounded px-3 py-1" onClick={() => { handleClose() }}>Quay lại</button>
+                <button className="border rounded px-3 py-1 bg-red-700 border-red-700 shadow-sm" onClick={() => { handleStartGame() }}>Thoát Game</button>
+              </div>
+            }
+          />
+          <button
+            className="p-2"
+            title="Setting"
+            onClick={() => {
+              setOpenModalConvert(true)
+            }}
+          >
+            [ Chuyển Đổi ]
+          </button>
+          <ModalComponent
+            isOpen={openModalConvert}
+            onClose={handleCloseConvert}
+            title={<p className="text-center">Chuyển Đổi Giai Đoạn</p>}
+            content={
+              <div className="border-y border-dashed py-3 px-4 my-4 flex flex-col gap-4 items-start">
+                <div className="c-btn__main min-w-[120px] items-center">
+                  <button
+                    className="flex-none bg-transparent text-white px-6 py-1 font-semibold hover:text-slate-900 w-full"
+                    onClick={() => {
+                      if (roomDetail?.nightMode) {
+                        handleNightMode(false)
+                      } else {
+                        handleNightMode(true)
+                      }
+                    }}
+                  >
+                    <span className="relative">{roomDetail?.nightMode === false ? 'Ban đêm' : 'Ban ngày'}</span>
+                  </button>
                 </div>
-              }
-              actions={
-                <button className="border rounded px-3 py-1 bg-red-700 border-red-700 shadow-sm" onClick={() => { handleCloseConvert() }}>Đóng</button>
-              }
-            />
-          </>
+                <div className="c-btn__main min-w-[120px] items-center">
+                  <button
+                    className="flex-none bg-transparent text-white px-6 py-1 font-semibold hover:text-slate-900 w-full"
+                    onClick={() => {
+                      alert('Thảo luận')
+                    }}
+                  >
+                    <span className="relative">Thảo luận</span>
+                  </button>
+                </div>
+                <div className="c-btn__main min-w-[120px] items-center">
+                  <button
+                    className="flex-none bg-transparent text-white px-6 py-1 font-semibold hover:text-slate-900 w-full"
+                    onClick={() => {
+                      alert('Bỏ phiếu')
+                    }}
+                  >
+                    <span className="relative">Bỏ Phiếu</span>
+                  </button>
+                </div>
+                <div className="c-btn__main min-w-[120px] items-center">
+                  <button
+                    className="flex-none bg-transparent text-white px-6 py-1 font-semibold hover:text-slate-900 w-full"
+                  >
+                    <span className="relative">...</span>
+                  </button>
+                </div>
+              </div>
+            }
+            actions={
+              <button className="border rounded px-3 py-1 bg-red-700 border-red-700 shadow-sm" onClick={() => { handleCloseConvert() }}>Đóng</button>
+            }
+          />
         </div>
       </div>
       <div className={(roomDetail?.nightMode === false ? 'bg-slate-600 ' : 'bg-slate-900 ') + "bg-hero-standard text-white min-h-screen pt-16 pb-2 px-2 flex relative overflow-hidden"}>
@@ -345,7 +343,7 @@ export default function Admin() {
             onClose={handleCloseAction}
             title={<p className="text-center">Chọn Hành Động</p>}
             content={
-              <>
+              <div>
                 <div className="border-t border-dashed py-3 px-4 mt-4">
                   <div className="text-center c-btn__main min-w-[200px] items-center flex-none bg-transparent text-white px-6 py-1">
 
@@ -368,7 +366,7 @@ export default function Admin() {
                   </div>
                   <ChildModal />
                 </div>
-              </>
+              </div>
             }
             actions={
               <button className="border rounded px-3 py-1 bg-red-700 border-red-700 shadow-sm" onClick={() => { handleCloseAction() }}>Đóng</button>
@@ -417,6 +415,6 @@ export default function Admin() {
           </div>
         </div>
       </div >
-    </>
+    </div>
   )
 }

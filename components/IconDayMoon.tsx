@@ -5,7 +5,7 @@ type IconDM = {
 
 const IconDayMoon = ({ nightMode }: IconDM) => {
   return (
-    <>
+    <div>
       <div className="absolute top-12 right-12 w-[120px] h-[120px] group-icon-night-mode">
         <div
           className={"absolute top-0 left-0 items " + (nightMode ? '' : 'active')}
@@ -30,7 +30,7 @@ const IconDayMoon = ({ nightMode }: IconDM) => {
           <p className="text-center icon-text">Tối Rồi</p>
         </div>
       </div>
-    </>
+    </div>
   )
 }
 

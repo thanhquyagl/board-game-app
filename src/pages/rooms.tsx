@@ -118,10 +118,10 @@ const Rooms = () => {
   }
 
   return (
-    <>
-    <Head>
-      <title>Danh sách phòng chơi</title>
-    </Head>
+    <div>
+      <Head>
+        <title>Danh sách phòng chơi</title>
+      </Head>
       <div className="bg-transparent absolute top-0 left-0 w-full text-white z-10">
         <div className="flex justify-between gap-2 max-w-2xl  min-h-[60px] mx-auto py-3 px-2">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
@@ -189,7 +189,7 @@ const Rooms = () => {
               onClose={handleClose}
               title="Đăng nhập"
               content={
-                <>
+                <div>
                   <p className="my-2">Vui lòng nhập Mật Khẩu để vào phòng chơi!</p>
                   <div className="border-y border-dashed py-4 flex flex-col gap-4 my-6">
                     <div className="relative group-input">
@@ -236,13 +236,13 @@ const Rooms = () => {
                       Đăng Nhập
                     </button>
                   </div>
-                </>
+                </div>
               }
             />
           </div>
         </div>
       </div>
-    </>
+    </div>
   )
 };
 

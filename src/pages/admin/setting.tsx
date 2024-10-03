@@ -120,7 +120,7 @@ export default function Setting() {
   };
 
   return (
-    <>
+    <div>
       <Head>
         <title>Admin setting</title>
       </Head>
@@ -255,6 +255,6 @@ export default function Setting() {
           </div>
         </div>
       </div >
-    </>
+    </div>
   )
 }

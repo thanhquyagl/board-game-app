@@ -22,7 +22,7 @@ const ModalComponent: React.FC<ModalComponentProps> = ({ isOpen, onClose, title,
         <div id="modal-description" className="my-4">
           {content}
         </div>
-        <div className="flex justify-end gap-3">
+        <div>
           {actions}
         </div>
       </div>

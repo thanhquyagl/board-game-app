@@ -121,7 +121,7 @@ export default function Player() {
   const filteredPlayerxroom = playerxroom.filter(playerRoom => playerRoom.id_room === id && playerRoom.rule === true);
 
   return (
-    <>
+    <div>
       <Head>
         <title>Phòng Chờ - Game {roomDetail && roomDetail.type}</title>
       </Head>
@@ -130,58 +130,56 @@ export default function Player() {
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
             <h1 className="text-base md:text-2xl font-semibold"> AGL Game Board</h1>
           </div>
-          <>
-            <button
-              className="px-2"
-              onClick={() => {
-                setOpenModal(true)
-              }}
+          <button
+            className="px-2"
+            onClick={() => {
+              setOpenModal(true)
+            }}
+          >
+            <ArrowBackIosNewIcon sx={{ fontSize: '14px', marginBottom: '2px' }} />
+            <span>Back</span>
+          </button>
+          <Modal
+            open={openModal}
+            onClose={handleClose}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+          >
+            <div
+              className="text-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-5 border rounded max-w-full w-[600px] bg-gray-950 shadow-sm"
             >
-              <ArrowBackIosNewIcon sx={{ fontSize: '14px', marginBottom: '2px' }} />
-              <span>Back</span>
-            </button>
-            <Modal
-              open={openModal}
-              onClose={handleClose}
-              aria-labelledby="modal-modal-title"
-              aria-describedby="modal-modal-description"
-            >
-              <div
-                className="text-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-5 border rounded max-w-full w-[600px] bg-gray-950 shadow-sm"
-              >
-                <p className="text-2xl font-bold">Thoát Phòng</p>
-                <p className="my-2">Bạn muốn thoát phòng?</p>
-                <div className="flex justify-end gap-3">
-                  <button
-                    className="border rounded px-3 py-1"
-                    onClick={() => {
-                      handleClose()
-                    }}
-                  >
-                    Canel
-                  </button>
-                  <button
-                    className="border rounded px-3 py-1 bg-red-700 border-red-700 shadow-sm"
-                    onClick={() => {
-                      handleMoveRoom()
-                    }}
-                  >
-                    Exit
-                  </button>
-                </div>
+              <p className="text-2xl font-bold">Thoát Phòng</p>
+              <p className="my-2">Bạn muốn thoát phòng?</p>
+              <div className="flex justify-end gap-3">
+                <button
+                  className="border rounded px-3 py-1"
+                  onClick={() => {
+                    handleClose()
+                  }}
+                >
+                  Canel
+                </button>
+                <button
+                  className="border rounded px-3 py-1 bg-red-700 border-red-700 shadow-sm"
+                  onClick={() => {
+                    handleMoveRoom()
+                  }}
+                >
+                  Exit
+                </button>
               </div>
-            </Modal>
+            </div>
+          </Modal>
 
-            <button
-              className="p-2"
-              title="Setting"
-              onClick={() => {
-                router.push(`/player/setting?idRoom=${id}`)
-              }}
-            >
-              [ Setting ]
-            </button>
-          </>
+          <button
+            className="p-2"
+            title="Setting"
+            onClick={() => {
+              router.push(`/player/setting?idRoom=${id}`)
+            }}
+          >
+            [ Setting ]
+          </button>
         </div>
       </div>
       <div className="bg-slate-900 bg-hero-standard  text-white min-h-screen pt-16 pb-2 px-2 flex relative">
@@ -211,6 +209,6 @@ export default function Player() {
           </div>
         </div>
       </div>
-    </>
+    </div>
   )
 }
